@@ -47,6 +47,8 @@ export const Dashboard: React.FC = () => {
                 throw new Error('URL do webhook não configurada');
             }
 
+            console.log('Usuário atual:', user); // DEBUG: Ver o que tem no objeto user
+
             // Construção dinâmica do payload
             const payload: any = {
                 user: user?.id || 'anonymous',
@@ -59,6 +61,8 @@ export const Dashboard: React.FC = () => {
             if (!autoPhrase) {
                 payload.frase = customPhrase;
             }
+
+            console.log('Payload enviado:', payload); // DEBUG: Ver o JSON final
 
             const response = await fetch(webhookUrl, {
                 method: 'POST',
