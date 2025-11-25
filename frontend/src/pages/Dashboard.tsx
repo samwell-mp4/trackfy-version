@@ -11,6 +11,7 @@ export const Dashboard: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [images, setImages] = useState<string[]>([]);
     const [autoPhrase, setAutoPhrase] = useState(true);
+    const [customPhrase, setCustomPhrase] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
@@ -24,8 +25,15 @@ export const Dashboard: React.FC = () => {
     };
 
     const handleGenerateVideo = async () => {
+        // Validação: Sempre precisa de imagens
         if (images.length === 0) {
             setNotification({ type: 'error', message: 'Adicione pelo menos uma imagem.' });
+            return;
+        }
+
+        // Validação: Se não for automático, precisa da frase
+        if (!autoPhrase && !customPhrase.trim()) {
+            setNotification({ type: 'error', message: 'Digite as frases para o vídeo.' });
             return;
         }
 
@@ -39,17 +47,25 @@ export const Dashboard: React.FC = () => {
                 throw new Error('URL do webhook não configurada');
             }
 
+            // Construção dinâmica do payload
+            const payload: any = {
+                user: user?.id || 'anonymous',
+                metodo: autoPhrase ? 'Automatico' : 'Manual',
+                // Remove o prefixo data:image/...;base64, para enviar apenas o hash
+                images: images.map(img => img.split(',')[1])
+            };
+
+            // Só adiciona o campo frase se for Manual
+            if (!autoPhrase) {
+                payload.frase = customPhrase;
+            }
+
             const response = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    images,
-                    autoPhrase,
-                    userEmail: user?.email,
-                    userId: user?.id
-                }),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -60,7 +76,8 @@ export const Dashboard: React.FC = () => {
                 type: 'success',
                 message: 'Solicitação enviada com sucesso! Seu vídeo será gerado em breve.'
             });
-            setImages([]); // Clear images after success
+            setImages([]);
+            setCustomPhrase('');
         } catch (error) {
             console.error('Error generating video:', error);
             setNotification({
@@ -97,6 +114,22 @@ export const Dashboard: React.FC = () => {
                                 label={autoPhrase ? 'Ativado' : 'Desativado'}
                             />
                         </div>
+
+                        {!autoPhrase && (
+                            <div className="custom-phrase-input">
+                                <label className="input-label">Digite suas frases</label>
+                                <textarea
+                                    className="phrase-textarea"
+                                    placeholder="Digite aqui as frases que você quer no vídeo..."
+                                    value={customPhrase}
+                                    onChange={(e) => setCustomPhrase(e.target.value)}
+                                    rows={4}
+                                />
+                                <span className="input-helper">
+                                    Essas frases serão usadas para gerar o conteúdo do vídeo.
+                                </span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="images-section">
