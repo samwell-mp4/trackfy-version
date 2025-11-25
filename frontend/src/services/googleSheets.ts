@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { UserRow } from '../types/user';
+import type { UserRow } from '../types/auth.types';
 
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEETS_ID;
 const SHEET_NAME = import.meta.env.VITE_SHEET_NAME || 'planilha_user';

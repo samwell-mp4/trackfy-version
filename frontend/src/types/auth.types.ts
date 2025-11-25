@@ -16,3 +16,9 @@ export interface LoginCredentials {
     email: string;
     password: string;
 }
+
+export interface UserRow {
+    Usuario: string;
+    Email: string;
+    Senha: string;
+}
