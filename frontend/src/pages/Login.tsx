@@ -25,8 +25,8 @@ export const Login: React.FC = () => {
         try {
             await login(email, password);
             navigate('/dashboard');
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Erro ao fazer login');
+        } catch (err: any) {
+            setError(err.message || 'Email ou senha inválidos');
         }
     };
 
@@ -86,7 +86,7 @@ export const Login: React.FC = () => {
 
                     <div className="login-footer">
                         <p className="login-footer-text">
-                            Powered by Google Sheets & n8n
+                            Powered by Supabase & n8n
                         </p>
                     </div>
                 </div>

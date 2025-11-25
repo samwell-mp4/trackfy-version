@@ -1,12 +1,7 @@
 export interface User {
+    id: string;
     usuario: string;
     email: string;
-}
-
-export interface UserRow {
-    Usuario: string;
-    Email: string;
-    Senha: string;
 }
 
 export interface AuthContextType {

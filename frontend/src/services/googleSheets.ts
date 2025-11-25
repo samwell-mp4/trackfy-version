@@ -1,7 +1,6 @@
 import axios from 'axios';
 import type { UserRow } from '../types/user';
 
-const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEETS_ID;
 const SHEET_NAME = import.meta.env.VITE_SHEET_NAME || 'planilha_user';
 
@@ -10,17 +9,32 @@ interface GoogleSheetsResponse {
 }
 
 class GoogleSheetsService {
-    private baseUrl = 'https://sheets.googleapis.com/v4/spreadsheets';
+    private accessToken: string | null = null;
 
     /**
-     * Busca todos os usuários da planilha
+     * Define o access token do Google OAuth2
+     */
+    setAccessToken(token: string) {
+        this.accessToken = token;
+    }
+
+    /**
+     * Busca todos os usuários da planilha usando OAuth2
      */
     async getUsers(): Promise<UserRow[]> {
+        if (!this.accessToken) {
+            throw new Error('Access token não configurado. Faça login com Google primeiro.');
+        }
+
         try {
             const range = `${SHEET_NAME}!A:C`;
-            const url = `${this.baseUrl}/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
 
-            const response = await axios.get<GoogleSheetsResponse>(url);
+            const response = await axios.get<GoogleSheetsResponse>(url, {
+                headers: {
+                    Authorization: `Bearer ${this.accessToken}`,
+                },
+            });
 
             if (!response.data.values || response.data.values.length === 0) {
                 return [];
@@ -37,6 +51,9 @@ class GoogleSheetsService {
             }));
         } catch (error) {
             console.error('Error fetching users from Google Sheets:', error);
+            if (axios.isAxiosError(error) && error.response?.status === 403) {
+                throw new Error('Sem permissão para acessar a planilha. Verifique as permissões.');
+            }
             throw new Error('Falha ao buscar usuários. Verifique a configuração da API.');
         }
     }

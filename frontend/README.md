@@ -1,44 +1,69 @@
-# VideoSIA - Frontend Setup
+# VideoSIA - Frontend com Supabase
 
-## 🚀 Como Usar
+## 🚀 Setup Rápido
 
-### 1. Configurar Google Sheets API
+### 1. Liberar Espaço em Disco
 
-Antes de rodar o projeto, você precisa configurar a API do Google Sheets:
-
-1. Acesse o [Google Cloud Console](https://console.cloud.google.com/)
-2. Crie um novo projeto ou selecione um existente
-3. Habilite a **Google Sheets API**
-4. Crie credenciais (API Key)
-5. Crie uma planilha no Google Sheets com a seguinte estrutura:
-
-**Nome da planilha:** `planilha_user`
-
-| Usuario | Email | Senha |
-|---------|-------|-------|
-| João Silva | joao@email.com | senha123 |
-| Maria Santos | maria@email.com | senha456 |
-
-6. Copie o ID da planilha (está na URL: `https://docs.google.com/spreadsheets/d/SEU_ID_AQUI/edit`)
-
-### 2. Configurar Variáveis de Ambiente
-
-Edite o arquivo `.env` na raiz do projeto:
-
-```env
-VITE_GOOGLE_CLIENT_ID=190435189255-pv7jho1babto8gcd7i4ek8jqp3s76khm.apps.googleusercontent.com
-VITE_GOOGLE_CLIENT_SECRET=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
-VITE_GOOGLE_SHEETS_ID=SEU_ID_DA_PLANILHA_AQUI
-VITE_SHEET_NAME=planilha_user
-
-# n8n Configuration
-VITE_N8N_WEBHOOK_BASE_URL=https://evolution-n8n.o9g2gq.easypanel.host
-```
-
-### 3. Instalar Dependências
+Você precisa liberar espaço no disco para instalar o Supabase:
 
 ```bash
-npm install
+# Limpar cache do npm
+npm cache clean --force
+
+# Depois instalar o Supabase
+npm install @supabase/supabase-js
+```
+
+### 2. Configurar Supabase Database
+
+No seu projeto Supabase (`https://okciydlceoohrkuqqeet.supabase.co`), execute este SQL:
+
+```sql
+-- Criar tabela de usuários
+CREATE TABLE IF NOT EXISTS users (
+  id UUID REFERENCES auth.users(id) PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  usuario TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Habilitar RLS (Row Level Security)
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+-- Policy: Usuários podem ler seus próprios dados
+CREATE POLICY "Users can read own data"
+  ON users
+  FOR SELECT
+  USING (auth.uid() = id);
+
+-- Policy: Usuários podem atualizar seus próprios dados
+CREATE POLICY "Users can update own data"
+  ON users
+  FOR UPDATE
+  USING (auth.uid() = id);
+```
+
+### 3. Criar Usuários de Teste
+
+No Supabase Dashboard:
+
+1. Vá em **Authentication** > **Users**
+2. Clique em **Add user** > **Create new user**
+3. Preencha:
+   - Email: `teste@email.com`
+   - Password: `senha123`
+   - Auto Confirm User: ✅ (marque esta opção)
+4. Clique em **Create user**
+
+Depois, adicione os dados na tabela `users`:
+
+```sql
+INSERT INTO users (id, email, usuario)
+VALUES (
+  'cole-o-id-do-usuario-aqui',
+  'teste@email.com',
+  'Usuário Teste'
+);
 ```
 
 ### 4. Rodar o Projeto
@@ -47,72 +72,48 @@ npm install
 npm run dev
 ```
 
-O projeto estará disponível em: `http://localhost:3000`
+Acesse: `http://localhost:3000`
 
-## 📁 Estrutura do Projeto
+## 🔐 Como Funciona
+
+1. **Login**: Usuário preenche email e senha
+2. **Supabase Auth**: Valida credenciais
+3. **Busca Dados**: Pega informações adicionais da tabela `users`
+4. **Sessão**: Mantém usuário logado automaticamente
+5. **Auto-logout**: Após 30 minutos de inatividade
+
+## 📁 Estrutura
 
 ```
 src/
-├── components/
-│   ├── auth/
-│   │   └── ProtectedRoute.tsx    # Proteção de rotas
-│   └── common/
-│       ├── Button.tsx             # Componente de botão
-│       └── Input.tsx              # Componente de input
+├── lib/
+│   └── supabase.ts          # Cliente Supabase
 ├── contexts/
-│   └── AuthContext.tsx            # Contexto de autenticação
-├── hooks/
-│   └── useAuth.ts                 # Hook de autenticação
+│   └── AuthContext.tsx      # Contexto de autenticação
 ├── pages/
-│   ├── Login.tsx                  # Página de login
-│   └── Dashboard.tsx              # Dashboard (em desenvolvimento)
-├── services/
-│   └── googleSheets.ts            # Serviço Google Sheets API
-├── styles/
-│   └── global.css                 # Estilos globais
-├── types/
-│   └── user.ts                    # Tipos TypeScript
-└── App.tsx                        # Configuração de rotas
+│   ├── Login.tsx            # Página de login
+│   └── Dashboard.tsx        # Dashboard
+└── App.tsx                  # Rotas
 ```
 
-## 🎨 Design System
+## ✅ Vantagens do Supabase
 
-O projeto usa um design system minimalista e tecnológico com:
-
-- **Tema Dark Mode** por padrão
-- **Paleta de cores** moderna (Indigo/Purple)
-- **Tipografia** Inter + Outfit
-- **Animações** com Framer Motion
-- **Componentes** reutilizáveis
-
-## 🔐 Autenticação
-
-A autenticação é feita via Google Sheets:
-
-1. Usuário preenche email e senha
-2. Sistema consulta a planilha via Google Sheets API
-3. Valida credenciais
-4. Cria sessão local (localStorage)
-5. Auto-logout após 30 minutos de inatividade
-
-## ⚠️ Importante
-
-> **Segurança**: Este método de autenticação é adequado para MVPs e protótipos. Para produção, migre para um sistema com hash de senhas e banco de dados adequado.
-
-## 📦 Tecnologias
-
-- React 18
-- TypeScript
-- Vite
-- React Router DOM
-- Framer Motion
-- Axios
-- Google Sheets API
+- ✅ **Mais simples** que Google OAuth
+- ✅ **Autenticação nativa** com email/senha
+- ✅ **Sessão automática** gerenciada pelo Supabase
+- ✅ **Banco de dados** PostgreSQL incluído
+- ✅ **Sem problemas de CORS**
+- ✅ **Escalável** e gratuito para começar
 
 ## 🔧 Próximos Passos
 
-- [ ] Implementar Dashboard completo
-- [ ] Criar interface de upload de mídias
-- [ ] Integrar com n8n webhooks
-- [ ] Implementar geração de vídeos
-- [ ] Adicionar templates personalizados
+1. Liberar espaço em disco
+2. Instalar `@supabase/supabase-js`
+3. Criar tabela `users` no Supabase
+4. Criar usuário de teste
+5. Testar login!
+
+## 📝 Credenciais Configuradas
+
+- **URL**: `https://okciydlceoohrkuqqeet.supabase.co`
+- **Anon Key**: Já configurada no `.env`
