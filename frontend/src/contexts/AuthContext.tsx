@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { createContext, useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import type { AuthContextType, User } from '@/types/auth.types';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -14,14 +15,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Check for saved user in localStorage on load
+        // Check for saved user and token in localStorage on load
         const savedUser = localStorage.getItem('videosia_user');
-        if (savedUser) {
+        const savedToken = localStorage.getItem('videosia_token');
+
+        if (savedUser && savedToken) {
             try {
                 setUser(JSON.parse(savedUser));
             } catch (e) {
                 console.error('Failed to parse saved user', e);
                 localStorage.removeItem('videosia_user');
+                localStorage.removeItem('videosia_token');
             }
         }
         setIsLoading(false);
@@ -30,31 +34,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const login = async (email: string, password: string) => {
         setIsLoading(true);
         try {
-            // Simple query to the 'users' table matching email and password
-            const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('email', email)
-                .eq('password', password)
-                .single();
+            // Call backend API for login
+            const response = await fetch(`${BACKEND_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-            if (error) {
-                throw new Error('Email ou senha inválidos');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Email ou senha inválidos');
             }
 
-            if (data) {
-                const userData: User = {
-                    id: data.id.toString(),
-                    usuario: data.usuario,
-                    email: data.email
-                };
+            const { token, user: userData } = await response.json();
 
-                // Save to state and localStorage
-                setUser(userData);
-                localStorage.setItem('videosia_user', JSON.stringify(userData));
-            } else {
-                throw new Error('Email ou senha inválidos');
-            }
+            const userToSave: User = {
+                id: userData.id.toString(),
+                usuario: userData.usuario,
+                email: userData.email
+            };
+
+            // Save to state and localStorage
+            setUser(userToSave);
+            localStorage.setItem('videosia_user', JSON.stringify(userToSave));
+            localStorage.setItem('videosia_token', token);
         } catch (error) {
             console.error('Login error:', error);
             throw error;
@@ -66,6 +71,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const logout = () => {
         setUser(null);
         localStorage.removeItem('videosia_user');
+        localStorage.removeItem('videosia_token');
     };
 
     const value: AuthContextType = {

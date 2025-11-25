@@ -41,30 +41,53 @@ export const Dashboard: React.FC = () => {
         setNotification(null);
 
         try {
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8052';
+            const token = localStorage.getItem('videosia_token');
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            // 1. Salvar requisição no backend
+            const saveResponse = await fetch(`${backendUrl}/api/video-request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    metodo: autoPhrase ? 'Automatico' : 'Manual',
+                    frase: autoPhrase ? null : customPhrase,
+                    num_images: images.length
+                })
+            });
+
+            if (!saveResponse.ok) {
+                throw new Error('Erro ao salvar requisição');
+            }
+
+            const { request } = await saveResponse.json();
+            console.log('Requisição salva:', request);
+
+            // 2. Enviar para n8n webhook
             const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_BASE_URL;
 
             if (!webhookUrl) {
                 throw new Error('URL do webhook não configurada');
             }
 
-            console.log('Usuário atual:', user); // DEBUG: Ver o que tem no objeto user
-
-            // Construção dinâmica do payload
             const payload: any = {
+                request_id: request.id,
                 user: user?.id || 'anonymous',
                 metodo: autoPhrase ? 'Automatico' : 'Manual',
-                // Remove o prefixo data:image/...;base64, para enviar apenas o hash
                 images: images.map(img => img.split(',')[1])
             };
 
-            // Só adiciona o campo frase se for Manual
             if (!autoPhrase) {
                 payload.frase = customPhrase;
             }
 
-            console.log('Payload enviado:', payload); // DEBUG: Ver o JSON final
-
-            const response = await fetch(webhookUrl, {
+            const webhookResponse = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,7 +95,7 @@ export const Dashboard: React.FC = () => {
                 body: JSON.stringify(payload),
             });
 
-            if (!response.ok) {
+            if (!webhookResponse.ok) {
                 throw new Error('Falha ao iniciar geração do vídeo');
             }
 
