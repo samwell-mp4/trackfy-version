@@ -206,15 +206,28 @@ app.get('/health', (req, res) => {
 
 // Servir arquivos estáticos do frontend (build do Vite)
 const path = require('path');
+const fs = require('fs');
 const frontendPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(frontendPath));
 
-// Rota catch-all para SPA - serve o index.html para todas as rotas não-API
-app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
-});
+// Verificar se o build do frontend existe
+if (fs.existsSync(frontendPath)) {
+    app.use(express.static(frontendPath));
+
+    // Rota catch-all para SPA
+    app.get('*', (req, res) => {
+        const indexPath = path.join(frontendPath, 'index.html');
+        if (fs.existsSync(indexPath)) {
+            res.sendFile(indexPath);
+        } else {
+            res.status(404).send('Frontend build not found (index.html missing)');
+        }
+    });
+    console.log(`Frontend estático configurado em: ${frontendPath}`);
+} else {
+    console.log('⚠️ Frontend build não encontrado. Rodando em modo API-only.');
+    console.log('   Para servir o frontend, rode "npm run build" na pasta frontend.');
+}
 
 app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
-    console.log(`Frontend servido de: ${frontendPath}`);
+    console.log(`🚀 Servidor rodando na porta ${port}`);
 });
