@@ -73,6 +73,7 @@ PORT=80
 JWT_SECRET=seu_jwt_secret_seguro_gerado_aleatoriamente
 SUPABASE_URL=https://seu-projeto.supabase.co
 SUPABASE_ANON_KEY=sua_chave_anon
+N8N_WEBHOOK_URL=https://evolution-n8n.o9g2gq.easypanel.host/webhook-test/sua-webhook-id
 ```
 
 > **Importante:** 

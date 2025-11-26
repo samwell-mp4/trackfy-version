@@ -69,13 +69,7 @@ export const Dashboard: React.FC = () => {
             const { request } = await saveResponse.json();
             console.log('Requisição salva:', request);
 
-            // 2. Enviar para n8n webhook
-            const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_BASE_URL;
-
-            if (!webhookUrl) {
-                throw new Error('URL do webhook não configurada');
-            }
-
+            // 2. Acionar n8n via proxy do backend (evita CORS)
             const payload: any = {
                 request_id: request.id,
                 user: user?.id || 'anonymous',
@@ -87,15 +81,16 @@ export const Dashboard: React.FC = () => {
                 payload.frase = customPhrase;
             }
 
-            const webhookResponse = await fetch(webhookUrl, {
+            const n8nResponse = await fetch(`${backendUrl}/api/trigger-n8n`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload),
             });
 
-            if (!webhookResponse.ok) {
+            if (!n8nResponse.ok) {
                 throw new Error('Falha ao iniciar geração do vídeo');
             }
 

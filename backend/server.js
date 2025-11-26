@@ -145,6 +145,60 @@ app.get('/me', authenticateToken, (req, res) => {
     res.json({ message: 'Acesso autorizado', user: req.user });
 });
 
+// Proxy para n8n webhook (evita CORS)
+app.post('/api/trigger-n8n', authenticateToken, async (req, res) => {
+    const { request_id, user, metodo, frase, images } = req.body;
+
+    if (!images || images.length === 0) {
+        return res.status(400).json({ error: 'Imagens são obrigatórias' });
+    }
+
+    try {
+        const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
+
+        if (!n8nWebhookUrl) {
+            console.error('N8N_WEBHOOK_URL não configurado');
+            return res.status(500).json({ error: 'Webhook não configurado' });
+        }
+
+        const payload = {
+            request_id,
+            user,
+            metodo,
+            images
+        };
+
+        if (metodo === 'Manual' && frase) {
+            payload.frase = frase;
+        }
+
+        // Fazer requisição para n8n
+        const response = await fetch(n8nWebhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erro do n8n:', errorText);
+            return res.status(response.status).json({
+                error: 'Falha ao acionar workflow',
+                details: errorText
+            });
+        }
+
+        const result = await response.json();
+        res.json({ success: true, result });
+
+    } catch (error) {
+        console.error('Erro ao chamar n8n:', error);
+        res.status(500).json({ error: 'Erro ao acionar workflow' });
+    }
+});
+
 // Health check para monitoramento
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
