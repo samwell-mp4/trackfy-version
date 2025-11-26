@@ -15,6 +15,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
                     fullWidth
                     onClick={() => onNavigate('create')}
                     className="sidebar-btn"
+                    {...({ 'data-variant': activeView === 'create' ? 'primary' : 'outline' } as any)}
                 >
                     Criar Vídeo
                 </Button>
@@ -23,6 +24,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
                     fullWidth
                     onClick={() => onNavigate('gallery')}
                     className="sidebar-btn"
+                    {...({ 'data-variant': activeView === 'gallery' ? 'primary' : 'outline' } as any)}
                 >
                     Galeria
                 </Button>

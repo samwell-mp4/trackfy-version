@@ -145,13 +145,14 @@ export const CreateVideo: React.FC = () => {
             <div className="images-section">
                 <div className="section-header">
                     <h3>Imagens Selecionadas ({images.length})</h3>
+
                     <Button
                         size="sm"
                         variant="outline"
                         onClick={() => setIsModalOpen(true)}
                     >
                         + Adicionar Imagem
-                    </Button>
+                    </Button><br></br><br></br>
                 </div>
 
                 {images.length > 0 ? (
