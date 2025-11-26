@@ -145,6 +145,22 @@ app.get('/me', authenticateToken, (req, res) => {
     res.json({ message: 'Acesso autorizado', user: req.user });
 });
 
+// Health check para monitoramento
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Servir arquivos estáticos do frontend (build do Vite)
+const path = require('path');
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
+
+// Rota catch-all para SPA - serve o index.html para todas as rotas não-API
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
+    console.log(`Frontend servido de: ${frontendPath}`);
 });

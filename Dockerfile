@@ -34,33 +34,17 @@ COPY frontend ./
 RUN npm run build
 
 # ========================================
-# Script de inicialização para ambos os serviços
+# Inicialização
+# Backend serve tanto a API quanto o frontend buildado
 # ========================================
-WORKDIR /app
-RUN echo '#!/bin/bash' > start.sh && \
-    echo 'set -e' >> start.sh && \
-    echo '' >> start.sh && \
-    echo 'echo "🚀 Iniciando Backend na porta 3000..."' >> start.sh && \
-    echo 'cd /app/backend && npm start &' >> start.sh && \
-    echo 'BACKEND_PID=$!' >> start.sh && \
-    echo '' >> start.sh && \
-    echo 'echo "🚀 Iniciando Frontend na porta 3100..."' >> start.sh && \
-    echo 'cd /app/frontend && npm run preview -- --host 0.0.0.0 --port 3100 &' >> start.sh && \
-    echo 'FRONTEND_PID=$!' >> start.sh && \
-    echo '' >> start.sh && \
-    echo 'echo "✅ Ambos os serviços iniciados!"' >> start.sh && \
-    echo 'echo "   Backend: http://localhost:3000"' >> start.sh && \
-    echo 'echo "   Frontend: http://localhost:3100"' >> start.sh && \
-    echo '' >> start.sh && \
-    echo 'wait $BACKEND_PID $FRONTEND_PID' >> start.sh && \
-    chmod +x start.sh
+WORKDIR /app/backend
 
-# Expor portas
-EXPOSE 3000 3100
+# Expor apenas a porta do backend (que agora serve tudo)
+EXPOSE 80
 
-# Health check para garantir que os serviços estão rodando
+# Health check para garantir que o serviço está rodando
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3000/health || curl -f http://localhost:3100/ || exit 1
+    CMD curl -f http://localhost:80/health || exit 1
 
 # Comando de inicialização
-CMD ["./start.sh"]
+CMD ["npm", "start"]
