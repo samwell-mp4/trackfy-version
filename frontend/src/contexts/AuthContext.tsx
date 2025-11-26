@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { createContext, useState, useEffect } from 'react';
 import type { AuthContextType, User } from '@/types/auth.types';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

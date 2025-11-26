@@ -44,7 +44,7 @@ export const Login: React.FC = () => {
             >
                 <div className="login-card">
                     <div className="login-header">
-                        <h1 className="login-title">VideoSIA</h1>
+                        <h1 className="login-title">I.A - Vídeos</h1>
                         <p className="login-subtitle">Crie vídeos incríveis com IA</p>
                     </div>
 
@@ -86,7 +86,7 @@ export const Login: React.FC = () => {
 
                     <div className="login-footer">
                         <p className="login-footer-text">
-                            Powered by Supabase & n8n
+                            Powered by Samwell Midias & Ds Do Havai
                         </p>
                     </div>
                 </div>

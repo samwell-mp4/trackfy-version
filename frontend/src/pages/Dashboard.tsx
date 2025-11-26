@@ -41,7 +41,7 @@ export const Dashboard: React.FC = () => {
         setNotification(null);
 
         try {
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8052';
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
             const token = localStorage.getItem('videosia_token');
 
             if (!token) {

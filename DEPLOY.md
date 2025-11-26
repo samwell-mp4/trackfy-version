@@ -75,7 +75,9 @@ SUPABASE_URL=https://seu-projeto.supabase.co
 SUPABASE_ANON_KEY=sua_chave_anon
 ```
 
-> **Importante:** Não precisa configurar VITE_* no EasyPanel, pois essas variáveis são usadas apenas no build
+> **Importante:** 
+> - Não precisa configurar `VITE_*` no EasyPanel, pois essas variáveis são usadas apenas no build
+> - O frontend `.env` já está configurado com `VITE_BACKEND_URL=` (vazio) para usar URLs relativas em produção
 
 ### 3. Build e Deploy
 
@@ -138,6 +140,14 @@ docker stop $(docker ps -q --filter ancestor=saas-video)
 
 ### Erro 404 em rotas do React Router
 ✅ **Solução:** O backend tem um catch-all route que serve `index.html` para todas as rotas não-API, permitindo o React Router funcionar corretamente.
+
+### API faz requisições para porta errada (ex: 8052, 3000)
+❌ **Problema:** O frontend foi buildado com `VITE_BACKEND_URL` apontando para URL incorreta.
+
+✅ **Solução:**
+1. Certifique-se que `frontend/.env` tem `VITE_BACKEND_URL=` (vazio)
+2. Rebuild o frontend: `cd frontend && npm run build`
+3. Redeploy no EasyPanel
 
 ### API não responde
 1. Verifique se as variáveis de ambiente estão configuradas
