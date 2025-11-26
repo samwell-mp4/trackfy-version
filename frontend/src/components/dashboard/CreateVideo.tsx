@@ -115,65 +115,71 @@ export const CreateVideo: React.FC = () => {
                 <p>Configure seu vídeo abaixo</p>
             </div>
 
-            <div className="settings-group">
-                <div className="setting-item">
-                    <span className="setting-label">Frase Automática</span>
-                    <Toggle
-                        checked={autoPhrase}
-                        onChange={setAutoPhrase}
-                        label={autoPhrase ? 'Ativado' : 'Desativado'}
-                    />
-                </div>
+            <div className="create-video-grid">
+                <div className="video-settings-column">
+                    <div className="settings-group">
+                        <div className="setting-item">
+                            <span className="setting-label">Frase Automática</span>
+                            <Toggle
+                                checked={autoPhrase}
+                                onChange={setAutoPhrase}
+                                label={autoPhrase ? 'Ativado' : 'Desativado'}
+                            />
+                        </div>
 
-                {!autoPhrase && (
-                    <div className="custom-phrase-input">
-                        <label className="input-label">Digite suas frases</label>
-                        <textarea
-                            className="phrase-textarea"
-                            placeholder="Digite aqui as frases que você quer no vídeo..."
-                            value={customPhrase}
-                            onChange={(e) => setCustomPhrase(e.target.value)}
-                            rows={4}
-                        />
-                        <span className="input-helper">
-                            Essas frases serão usadas para gerar o conteúdo do vídeo.
-                        </span>
-                    </div>
-                )}
-            </div>
-
-            <div className="images-section">
-                <div className="section-header">
-                    <h3>Imagens Selecionadas ({images.length})</h3>
-
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        + Adicionar Imagem
-                    </Button><br></br><br></br>
-                </div>
-
-                {images.length > 0 ? (
-                    <div className="image-grid">
-                        {images.map((img, index) => (
-                            <div key={index} className="image-preview">
-                                <img src={img} alt={`Preview ${index + 1}`} />
-                                <button
-                                    className="remove-image-btn"
-                                    onClick={() => removeImage(index)}
-                                >
-                                    ×
-                                </button>
+                        {!autoPhrase && (
+                            <div className="custom-phrase-input">
+                                <label className="input-label">Digite suas frases</label>
+                                <textarea
+                                    className="phrase-textarea"
+                                    placeholder="Digite aqui as frases que você quer no vídeo..."
+                                    value={customPhrase}
+                                    onChange={(e) => setCustomPhrase(e.target.value)}
+                                    rows={4}
+                                />
+                                <span className="input-helper">
+                                    Essas frases serão usadas para gerar o conteúdo do vídeo.
+                                </span>
                             </div>
-                        ))}
+                        )}
                     </div>
-                ) : (
-                    <div className="empty-state">
-                        <p>Nenhuma imagem selecionada</p>
+                </div>
+
+                <div className="video-media-column">
+                    <div className="images-section">
+                        <div className="section-header">
+                            <h3>Imagens Selecionadas ({images.length})</h3>
+
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                + Adicionar Imagem
+                            </Button>
+                        </div>
+
+                        {images.length > 0 ? (
+                            <div className="image-grid">
+                                {images.map((img, index) => (
+                                    <div key={index} className="image-preview">
+                                        <img src={img} alt={`Preview ${index + 1}`} />
+                                        <button
+                                            className="remove-image-btn"
+                                            onClick={() => removeImage(index)}
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="empty-state">
+                                <p>Nenhuma imagem selecionada</p>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
 
             {notification && (
