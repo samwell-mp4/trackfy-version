@@ -32,73 +32,10 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setNotification(null);
     };
 
-    const checkStatus = async (requestId: number, currentToken: string, backendUrl: string) => {
-        try {
-            const response = await fetch(`${backendUrl}/api/video-requests?status=pending`, {
-                headers: { 'Authorization': `Bearer ${currentToken}` }
-            });
-
-            if (response.ok) {
-                const { requests } = await response.json();
-                const pendingRequest = requests.find((r: any) => r.id === requestId);
-
-                if (!pendingRequest) {
-                    // If not found in pending, assume completed (or check completed list if needed)
-                    // For now, if it's gone from pending, we treat as success/done
-                    setGenerationStatus('success');
-                    setIsGenerating(false);
-                    setNotification({
-                        type: 'success',
-                        message: 'Vídeo finalizado! Veja na galeria.'
-                    });
-                    setTimeout(() => setGenerationStatus('idle'), 5000);
-                    return true;
-                }
-                // Still pending
-                return false;
-            }
-        } catch (error) {
-            console.error('Erro ao verificar status:', error);
-        }
-        return false;
-    };
-
-    // Check for any pending requests on mount/login
-    useEffect(() => {
-        if (!token) return;
-
-        const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
-
-        const checkInitialPending = async () => {
-            try {
-                const response = await fetch(`${backendUrl}/api/video-requests?status=pending`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (response.ok) {
-                    const { requests } = await response.json();
-                    if (requests && requests.length > 0) {
-                        // Found a pending request!
-                        const pending = requests[0];
-                        setIsGenerating(true);
-                        setGenerationStatus('generating');
-
-                        // Start polling for this request
-                        const pollInterval = setInterval(async () => {
-                            const isDone = await checkStatus(pending.id, token, backendUrl);
-                            if (isDone) clearInterval(pollInterval);
-                        }, 5000);
-                    }
-                }
-            } catch (error) {
-                console.error('Erro ao verificar pendentes iniciais:', error);
-            }
-        };
-
-        checkInitialPending();
-    }, [token]);
+    // Removed polling and persistence logic as requested
 
     const generateVideo = async (
-        tokenArg: string, // Kept for compatibility but we have token from hook too
+        tokenArg: string,
         backendUrl: string,
         payload: {
             user: any;
@@ -116,6 +53,7 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setNotification(null);
 
         try {
+            // 1. Save request to DB
             const saveResponse = await fetch(`${backendUrl}/api/video-request`, {
                 method: 'POST',
                 headers: {
@@ -129,26 +67,24 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 })
             });
 
-            if (!saveResponse.ok) throw new Error('Erro ao salvar requisição');
+            if (!saveResponse.ok) {
+                const errorData = await saveResponse.json();
+                throw new Error(errorData.details || 'Erro ao salvar requisição');
+            }
 
             const { request } = await saveResponse.json();
 
-            // Start polling immediately
-            const pollInterval = setInterval(async () => {
-                const isDone = await checkStatus(request.id, tokenArg, backendUrl);
-                if (isDone) clearInterval(pollInterval);
-            }, 5000);
-
-            // Trigger N8N
+            // 2. Trigger N8N (Fire and forget)
             const n8nPayload: any = {
                 request_id: request.id,
                 user: payload.user?.id || 'anonymous',
                 metodo: payload.metodo,
-                images: payload.images.map(img => img.split(',')[1])
+                images: payload.images.map((img: string) => img.split(',')[1])
             };
 
             if (!payload.autoPhrase) n8nPayload.frase = payload.customPhrase;
 
+            // Don't await this, just trigger it
             fetch(`${backendUrl}/api/trigger-n8n`, {
                 method: 'POST',
                 headers: {
@@ -158,11 +94,22 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 body: JSON.stringify(n8nPayload),
             }).catch(console.error);
 
-        } catch (error) {
+            // 3. Immediate Success
+            setGenerationStatus('success');
+            setIsGenerating(false);
+            setNotification({
+                type: 'success',
+                message: 'Solicitação enviada! O vídeo aparecerá na galeria em breve.'
+            });
+
+            // Reset status after a few seconds
+            setTimeout(() => setGenerationStatus('idle'), 5000);
+
+        } catch (error: any) {
             console.error('Error generating video:', error);
             setGenerationStatus('error');
             setIsGenerating(false);
-            setNotification({ type: 'error', message: 'Erro ao enviar solicitação.' });
+            setNotification({ type: 'error', message: error.message || 'Erro ao enviar solicitação.' });
         }
     };
 
