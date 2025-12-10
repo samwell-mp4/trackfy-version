@@ -20,5 +20,10 @@ export default defineConfig({
   },
   server: {
     port: 3100,
+    proxy: {
+      '/login': 'http://localhost:8052',
+      '/api': 'http://localhost:8052',
+      '/highlights': 'http://localhost:8052'
+    }
   },
 })

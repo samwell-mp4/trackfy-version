@@ -20,8 +20,8 @@ export const Gallery: React.FC = () => {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                // Use VITE_BACKEND_URL if available, otherwise fallback to localhost:8052
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8052';
+                // Use VITE_BACKEND_URL if available, otherwise relative path (proxy in dev, direct in prod)
+                const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
                 const response = await fetch(`${backendUrl}/api/gallery`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
