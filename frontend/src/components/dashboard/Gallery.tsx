@@ -10,11 +10,13 @@ interface Video {
     createdAt: string;
     size: string;
     mimeType?: string;
+    isPosted?: boolean;
 }
 
 export const Gallery: React.FC = () => {
     const { token, user } = useAuth();
     const [videos, setVideos] = useState<Video[]>([]);
+    const [filter, setFilter] = useState<'all' | 'pending' | 'posted'>('all');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -67,20 +69,101 @@ export const Gallery: React.FC = () => {
         return (size / Math.pow(1024, i)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
     };
 
+    const togglePosted = async (video: Video) => {
+        const newStatus = !video.isPosted;
+
+        // Otimistic update
+        setVideos(prev => prev.map(v =>
+            v.id === video.id ? { ...v, isPosted: newStatus } : v
+        ));
+
+        try {
+            const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
+            await fetch(`${backendUrl}/api/gallery/toggle-posted`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    drive_file_id: video.id,
+                    is_posted: newStatus
+                })
+            });
+        } catch (error) {
+            console.error('Erro ao atualizar status:', error);
+            // Revert on error
+            setVideos(prev => prev.map(v =>
+                v.id === video.id ? { ...v, isPosted: !newStatus } : v
+            ));
+        }
+    };
+
+    const filteredVideos = videos.filter(video => {
+        if (filter === 'all') return true;
+        if (filter === 'pending') return !video.isPosted;
+        if (filter === 'posted') return video.isPosted;
+        return true;
+    });
+
+    const metrics = {
+        total: videos.length,
+        pending: videos.filter(v => !v.isPosted).length,
+        posted: videos.filter(v => v.isPosted).length
+    };
+
     return (
         <div className="dashboard-card gallery-card">
             <div className="card-header">
                 <div>
                     <h2>Minha Galeria</h2>
-                    <p>Seus vídeos gerados e salvos no Google Drive.</p>
+                    <p>Gerencie seus vídeos gerados.</p>
                 </div>
+                <div className="header-actions">
+                    <button
+                        onClick={fetchVideos}
+                        className="refresh-btn"
+                        disabled={loading}
+                        title="Atualizar lista"
+                    >
+                        🔄
+                    </button>
+                </div>
+            </div>
+
+            <div className="gallery-metrics">
+                <div className="metric-item">
+                    <span className="metric-value">{metrics.total}</span>
+                    <span className="metric-label">Total</span>
+                </div>
+                <div className="metric-item pending">
+                    <span className="metric-value">{metrics.pending}</span>
+                    <span className="metric-label">Pendentes</span>
+                </div>
+                <div className="metric-item posted">
+                    <span className="metric-value">{metrics.posted}</span>
+                    <span className="metric-label">Postados</span>
+                </div>
+            </div>
+
+            <div className="gallery-tabs">
                 <button
-                    onClick={fetchVideos}
-                    className="refresh-btn"
-                    disabled={loading}
-                    title="Atualizar lista"
+                    className={`tab-btn ${filter === 'all' ? 'active' : ''}`}
+                    onClick={() => setFilter('all')}
                 >
-                    🔄
+                    Todos
+                </button>
+                <button
+                    className={`tab-btn ${filter === 'pending' ? 'active' : ''}`}
+                    onClick={() => setFilter('pending')}
+                >
+                    Pendentes
+                </button>
+                <button
+                    className={`tab-btn ${filter === 'posted' ? 'active' : ''}`}
+                    onClick={() => setFilter('posted')}
+                >
+                    Postados
                 </button>
             </div>
 
@@ -107,7 +190,7 @@ export const Gallery: React.FC = () => {
                 </div>
             ) : (
                 <div className="gallery-grid">
-                    {videos.map((video) => (
+                    {filteredVideos.map((video) => (
                         <div key={video.id} className="video-card">
                             <div className="video-thumbnail">
                                 {video.thumbnail ? (
@@ -144,6 +227,19 @@ export const Gallery: React.FC = () => {
                                     >
                                         <span>⬇</span> Baixar
                                     </a>
+                                </div>
+                                <div className="video-status-toggle">
+                                    <label className="toggle-label">
+                                        <input
+                                            type="checkbox"
+                                            checked={!!video.isPosted}
+                                            onChange={() => togglePosted(video)}
+                                        />
+                                        <span className="toggle-slider"></span>
+                                        <span className="toggle-text">
+                                            {video.isPosted ? 'Postado ✅' : 'Marcar como Postado'}
+                                        </span>
+                                    </label>
                                 </div>
                             </div>
                         </div>

@@ -11,6 +11,8 @@
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
 }
 
 .video-card:hover {
@@ -33,18 +35,11 @@
     object-fit: cover;
 }
 
-.video-thumbnail-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #666;
-    font-size: 3rem;
-}
-
 .video-info {
     padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .video-title {
@@ -68,9 +63,10 @@
 .video-actions {
     display: flex;
     gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-.btn-watch, .btn-download {
+.btn-download {
     flex: 1;
     padding: 0.5rem;
     border-radius: 6px;
@@ -84,19 +80,6 @@
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-}
-
-.btn-watch {
-    background-color: #8b5cf6;
-    color: white;
-    border: none;
-}
-
-.btn-watch:hover {
-    background-color: #7c3aed;
-}
-
-.btn-download {
     background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -104,6 +87,127 @@
 
 .btn-download:hover {
     background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Metrics */
+.gallery-metrics {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metric-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-item.pending .metric-value { color: #fbbf24; }
+.metric-item.posted .metric-value { color: #34d399; }
+
+/* Tabs */
+.gallery-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: #888;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    color: #fff;
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+}
+
+/* Toggle Switch */
+.video-status-toggle {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.75rem;
+    user-select: none;
+}
+
+.toggle-label input {
+    display: none;
+}
+
+.toggle-slider {
+    width: 36px;
+    height: 20px;
+    background-color: #333;
+    border-radius: 20px;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #fff;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+}
+
+.toggle-label input:checked + .toggle-slider {
+    background-color: #34d399;
+}
+
+.toggle-label input:checked + .toggle-slider::before {
+    transform: translateX(16px);
+}
+
+.toggle-text {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+.toggle-label input:checked ~ .toggle-text {
+    color: #34d399;
 }
 
 .loading-state, .error-state {

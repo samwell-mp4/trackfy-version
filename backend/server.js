@@ -149,10 +149,32 @@ app.get('/api/video-requests', authenticateToken, async (req, res) => {
 // Importar serviço do Google Drive
 const driveService = require('./services/driveService');
 
-// Rota da Galeria (Google Drive)
+// Rota da Galeria (Google Drive + Supabase Tracking)
 app.get('/api/gallery', authenticateToken, async (req, res) => {
     try {
-        const videos = await driveService.listUserVideos(req.user.id);
+        // 1. Buscar vídeos do Drive
+        const driveVideos = await driveService.listUserVideos(req.user.id);
+
+        // 2. Buscar status de postagem no Supabase
+        const { data: trackingData, error } = await supabase
+            .from('gallery_tracking')
+            .select('drive_file_id, is_posted')
+            .eq('user_id', req.user.id);
+
+        if (error) {
+            console.error('Erro ao buscar tracking:', error);
+            // Não falha a requisição, apenas loga o erro e segue sem status
+        }
+
+        // 3. Mesclar dados
+        const videos = driveVideos.map(video => {
+            const tracking = trackingData?.find(t => t.drive_file_id === video.id);
+            return {
+                ...video,
+                isPosted: tracking ? tracking.is_posted : false
+            };
+        });
+
         res.json({ videos });
     } catch (error) {
         console.error('Erro na rota da galeria:', error);
@@ -160,6 +182,36 @@ app.get('/api/gallery', authenticateToken, async (req, res) => {
             error: 'Erro ao carregar galeria',
             details: error.message
         });
+    }
+});
+
+// Rota para alternar status de postagem
+app.post('/api/gallery/toggle-posted', authenticateToken, async (req, res) => {
+    const { drive_file_id, is_posted } = req.body;
+
+    if (!drive_file_id) {
+        return res.status(400).json({ error: 'ID do arquivo é obrigatório' });
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('gallery_tracking')
+            .upsert({
+                user_id: req.user.id,
+                drive_file_id,
+                is_posted
+            }, { onConflict: 'user_id, drive_file_id' })
+            .select()
+            .single();
+
+        if (error) {
+            throw error;
+        }
+
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error('Erro ao atualizar status:', error);
+        res.status(500).json({ error: 'Erro ao atualizar status' });
     }
 });
 
