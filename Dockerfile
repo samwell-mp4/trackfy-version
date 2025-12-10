@@ -5,7 +5,7 @@
 FROM node:20-alpine
 
 # Instalar dependências do sistema
-RUN apk add --no-cache bash curl
+RUN apk add --no-cache bash curl python3 ffmpeg
 
 # Diretório de trabalho
 WORKDIR /app
