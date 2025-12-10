@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@hooks/useAuth';
+import { useVideo } from '@contexts/VideoContext';
 import { Button } from '@components/common/Button';
 import { Modal } from '@components/common/Modal';
 import { Toggle } from '@components/common/Toggle';
@@ -11,7 +12,7 @@ export const CreateVideo: React.FC = () => {
     const [images, setImages] = useState<string[]>([]);
     const [autoPhrase, setAutoPhrase] = useState(true);
     const [customPhrase, setCustomPhrase] = useState('');
-    const [isGenerating, setIsGenerating] = useState(false);
+    const { isGenerating, generateVideo } = useVideo();
     const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
     const handleImageSelect = (base64: string) => {
@@ -34,104 +35,45 @@ export const CreateVideo: React.FC = () => {
             return;
         }
 
-        setIsGenerating(true);
         setNotification(null);
 
-        try {
-            const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
-            const token = localStorage.getItem('videosia_token');
+        const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
+        const token = localStorage.getItem('videosia_token');
 
-            if (!token) {
-                throw new Error('Usuário não autenticado');
-            }
-
-            // 1. Salvar requisição no backend
-            const saveResponse = await fetch(`${backendUrl}/api/video-request`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    metodo: autoPhrase ? 'Automatico' : 'Manual',
-                    frase: autoPhrase ? null : customPhrase,
-                    num_images: images.length
-                })
-            });
-
-            if (!saveResponse.ok) {
-                if (saveResponse.status === 403) {
-                    logout();
-                    setNotification({
-                        type: 'error',
-                        message: 'Sessão expirada. Por favor, faça login novamente.'
-                    });
-                    return;
-                }
-                throw new Error('Erro ao salvar requisição');
-            }
-
-            const { request } = await saveResponse.json();
-            console.log('Requisição salva:', request);
-
-            // 2. Acionar n8n via proxy do backend
-            const payload: any = {
-                request_id: request.id,
-                user: user?.id || 'anonymous',
-                metodo: autoPhrase ? 'Automatico' : 'Manual',
-                images: images.map(img => img.split(',')[1])
-            };
-
-            if (!autoPhrase) {
-                payload.frase = customPhrase;
-            }
-
-            const n8nResponse = await fetch(`${backendUrl}/api/trigger-n8n`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!n8nResponse.ok) {
-                if (n8nResponse.status === 403) {
-                    logout();
-                    setNotification({
-                        type: 'error',
-                        message: 'Sessão expirada. Por favor, faça login novamente.'
-                    });
-                    return;
-                }
-                throw new Error('Falha ao iniciar geração do vídeo');
-            }
-
-            const result = await n8nResponse.json();
-
-            if (result.result && result.result.complete === 'true') {
-                setNotification({
-                    type: 'success',
-                    message: 'O seus vídeos foi adicionado a sua galeria com sucesso.'
-                });
-            } else {
-                setNotification({
-                    type: 'success',
-                    message: 'Solicitação enviada! Aguarde o processamento.'
-                });
-            }
-
-            setImages([]);
-            setCustomPhrase('');
-        } catch (error) {
-            console.error('Error generating video:', error);
-            setNotification({
-                type: 'error',
-                message: 'Erro ao enviar solicitação. Tente novamente.'
-            });
-        } finally {
-            setIsGenerating(false);
+        if (!token) {
+            setNotification({ type: 'error', message: 'Usuário não autenticado' });
+            return;
         }
+
+        await generateVideo(
+            token,
+            backendUrl,
+            {
+                user,
+                metodo: autoPhrase ? 'Automatico' : 'Manual',
+                frase: autoPhrase ? null : customPhrase,
+                images,
+                autoPhrase,
+                customPhrase
+            },
+            {
+                onSuccess: (message) => {
+                    setNotification({ type: 'success', message });
+                    setImages([]);
+                    setCustomPhrase('');
+                },
+                onError: (message) => {
+                    setNotification({ type: 'error', message });
+                },
+                onLogout: () => {
+                    logout();
+                    setNotification({
+                        type: 'error',
+                        message: 'Sessão expirada. Por favor, faça login novamente.'
+                    });
+                }
+            }
+        );
     };
 
     return (
