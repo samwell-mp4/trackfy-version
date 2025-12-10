@@ -312,10 +312,28 @@ app.post('/api/trigger-n8n', authenticateToken, async (req, res) => {
         }
 
         const result = await response.json();
+
+        // Atualizar status no banco
+        const status = (result.result && result.result.complete === 'true') ? 'completed' : 'pending';
+
+        await supabase
+            .from('video_requests')
+            .update({ status })
+            .eq('id', request_id);
+
         res.json({ success: true, result });
 
     } catch (error) {
         console.error('Erro ao chamar n8n:', error);
+
+        // Atualizar status para erro
+        if (request_id) {
+            await supabase
+                .from('video_requests')
+                .update({ status: 'failed' })
+                .eq('id', request_id);
+        }
+
         res.status(500).json({ error: 'Erro ao acionar workflow' });
     }
 });
