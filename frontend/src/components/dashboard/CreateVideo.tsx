@@ -38,7 +38,7 @@ export const CreateVideo: React.FC = () => {
         setNotification(null);
 
         try {
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? 'http://localhost:8052' : '');
+            const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
             const token = localStorage.getItem('videosia_token');
 
             if (!token) {

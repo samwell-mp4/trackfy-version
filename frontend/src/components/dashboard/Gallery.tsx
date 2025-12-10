@@ -21,7 +21,7 @@ export const Gallery: React.FC = () => {
         const fetchVideos = async () => {
             try {
                 // Use VITE_BACKEND_URL if available, otherwise relative path (proxy in dev, direct in prod)
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+                const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
                 const response = await fetch(`${backendUrl}/api/gallery`, {
                     headers: {
                         'Authorization': `Bearer ${token}`

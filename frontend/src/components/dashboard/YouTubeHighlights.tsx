@@ -18,7 +18,7 @@ export const YouTubeHighlights: React.FC = () => {
         setHighlights([]);
 
         try {
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8052';
+            const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
             const response = await fetch(`${backendUrl}/api/youtube-highlights`, {
                 method: 'POST',
                 headers: {
@@ -97,7 +97,7 @@ export const YouTubeHighlights: React.FC = () => {
             {status === 'completed' && (
                 <div className="highlights-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
                     {highlights.map((videoPath, index) => {
-                        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8052';
+                        const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
                         return (
                             <div key={index} className="highlight-card" style={{ backgroundColor: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
                                 <h3 style={{ marginTop: 0 }}>Destaque {index + 1}</h3>

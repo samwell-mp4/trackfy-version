@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { createContext, useState, useEffect } from 'react';
 import type { AuthContextType, User } from '@/types/auth.types';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
+const BACKEND_URL = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
