@@ -2,6 +2,8 @@ import React, { createContext, useState, useContext, type ReactNode } from 'reac
 
 interface VideoContextType {
     isGenerating: boolean;
+    notification: { type: 'success' | 'error', message: string } | null;
+    clearNotification: () => void;
     generateVideo: (
         token: string,
         backendUrl: string,
@@ -12,11 +14,6 @@ interface VideoContextType {
             images: string[];
             autoPhrase: boolean;
             customPhrase: string;
-        },
-        callbacks: {
-            onSuccess: (message: string) => void;
-            onError: (message: string) => void;
-            onLogout: () => void;
         }
     ) => Promise<void>;
 }
@@ -25,6 +22,9 @@ const VideoContext = createContext<VideoContextType | undefined>(undefined);
 
 export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [isGenerating, setIsGenerating] = useState(false);
+    const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+    const clearNotification = () => setNotification(null);
 
     const generateVideo = async (
         token: string,
@@ -36,14 +36,11 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             images: string[];
             autoPhrase: boolean;
             customPhrase: string;
-        },
-        callbacks: {
-            onSuccess: (message: string) => void;
-            onError: (message: string) => void;
-            onLogout: () => void;
         }
     ) => {
         setIsGenerating(true);
+        setNotification(null);
+
         try {
             // 1. Salvar requisição no backend
             const saveResponse = await fetch(`${backendUrl}/api/video-request`, {
@@ -61,7 +58,10 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
             if (!saveResponse.ok) {
                 if (saveResponse.status === 403) {
-                    callbacks.onLogout();
+                    setNotification({
+                        type: 'error',
+                        message: 'Sessão expirada. Por favor, faça login novamente.'
+                    });
                     return;
                 }
                 throw new Error('Erro ao salvar requisição');
@@ -93,7 +93,10 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
             if (!n8nResponse.ok) {
                 if (n8nResponse.status === 403) {
-                    callbacks.onLogout();
+                    setNotification({
+                        type: 'error',
+                        message: 'Sessão expirada. Por favor, faça login novamente.'
+                    });
                     return;
                 }
                 throw new Error('Falha ao iniciar geração do vídeo');
@@ -102,21 +105,30 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             const result = await n8nResponse.json();
 
             if (result.result && result.result.complete === 'true') {
-                callbacks.onSuccess('O seus vídeos foi adicionado a sua galeria com sucesso.');
+                setNotification({
+                    type: 'success',
+                    message: 'O seus vídeos foi adicionado a sua galeria com sucesso.'
+                });
             } else {
-                callbacks.onSuccess('Solicitação enviada! Aguarde o processamento.');
+                setNotification({
+                    type: 'success',
+                    message: 'Solicitação enviada! Aguarde o processamento.'
+                });
             }
 
         } catch (error) {
             console.error('Error generating video:', error);
-            callbacks.onError('Erro ao enviar solicitação. Tente novamente.');
+            setNotification({
+                type: 'error',
+                message: 'Erro ao enviar solicitação. Tente novamente.'
+            });
         } finally {
             setIsGenerating(false);
         }
     };
 
     return (
-        <VideoContext.Provider value={{ isGenerating, generateVideo }}>
+        <VideoContext.Provider value={{ isGenerating, generateVideo, notification, clearNotification }}>
             {children}
         </VideoContext.Provider>
     );
