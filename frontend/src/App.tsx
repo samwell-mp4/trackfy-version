@@ -4,15 +4,15 @@ import { VideoProvider } from '@contexts/VideoContext';
 import { ProtectedRoute } from '@components/auth/ProtectedRoute';
 import { Login } from '@pages/Login';
 import { Dashboard } from '@pages/Dashboard';
-import { LoadingOverlay } from '@components/common/LoadingOverlay';
+import { StatusPopup } from '@components/common/StatusPopup';
 import { useVideo } from '@contexts/VideoContext';
 import '@styles/global.css';
 
 const AppContent = () => {
-  const { isGenerating } = useVideo();
+  const { isGenerating, generationStatus } = useVideo();
   return (
     <>
-      <LoadingOverlay isVisible={isGenerating} />
+      <StatusPopup isVisible={isGenerating || generationStatus === 'success'} status={generationStatus} />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route

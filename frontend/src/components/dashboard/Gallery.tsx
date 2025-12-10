@@ -112,11 +112,15 @@ export const Gallery: React.FC = () => {
         posted: videos.filter(v => v.isPosted).length
     };
 
+    const [showDebug, setShowDebug] = useState(false);
+
     return (
         <div className="dashboard-card gallery-card">
             <div className="card-header">
                 <div>
-                    <h2>Minha Galeria</h2>
+                    <h2 onClick={() => setShowDebug(!showDebug)} style={{ cursor: 'pointer' }}>
+                        Minha Galeria {showDebug && '🐞'}
+                    </h2>
                     <p>Gerencie seus vídeos gerados.</p>
                 </div>
                 <div className="header-actions">
@@ -130,6 +134,21 @@ export const Gallery: React.FC = () => {
                     </button>
                 </div>
             </div>
+
+            {showDebug && videos.length > 0 && (
+                <div style={{
+                    background: '#111',
+                    padding: '1rem',
+                    marginBottom: '1rem',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    fontFamily: 'monospace',
+                    overflowX: 'auto'
+                }}>
+                    <h4>DEBUG INFO (First Video)</h4>
+                    <pre>{JSON.stringify(videos[0], null, 2)}</pre>
+                </div>
+            )}
 
             <div className="gallery-metrics">
                 <div className="metric-item">

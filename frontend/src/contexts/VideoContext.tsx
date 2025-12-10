@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, type ReactNode } from 'reac
 
 interface VideoContextType {
     isGenerating: boolean;
+    generationStatus: 'idle' | 'generating' | 'success' | 'error';
     notification: { type: 'success' | 'error', message: string } | null;
     clearNotification: () => void;
     generateVideo: (
@@ -22,6 +23,7 @@ const VideoContext = createContext<VideoContextType | undefined>(undefined);
 
 export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [isGenerating, setIsGenerating] = useState(false);
+    const [generationStatus, setGenerationStatus] = useState<'idle' | 'generating' | 'success' | 'error'>('idle');
     const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
     const clearNotification = () => setNotification(null);
@@ -39,6 +41,7 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }
     ) => {
         setIsGenerating(true);
+        setGenerationStatus('generating');
         setNotification(null);
 
         try {
@@ -109,15 +112,20 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     type: 'success',
                     message: 'O seus vídeos foi adicionado a sua galeria com sucesso.'
                 });
+                setGenerationStatus('success');
             } else {
                 setNotification({
                     type: 'success',
                     message: 'Solicitação enviada! Aguarde o processamento.'
                 });
+                setGenerationStatus('success');
             }
+
+            setTimeout(() => setGenerationStatus('idle'), 5000);
 
         } catch (error) {
             console.error('Error generating video:', error);
+            setGenerationStatus('error');
             setNotification({
                 type: 'error',
                 message: 'Erro ao enviar solicitação. Tente novamente.'
@@ -128,7 +136,7 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     };
 
     return (
-        <VideoContext.Provider value={{ isGenerating, generateVideo, notification, clearNotification }}>
+        <VideoContext.Provider value={{ isGenerating, generationStatus, generateVideo, notification, clearNotification }}>
             {children}
         </VideoContext.Provider>
     );

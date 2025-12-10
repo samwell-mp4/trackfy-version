@@ -167,8 +167,20 @@ app.get('/api/gallery', authenticateToken, async (req, res) => {
         }
 
         // 3. Mesclar dados
+        console.log(`[Gallery Debug] Drive Videos: ${driveVideos.length}, Tracking Data: ${trackingData?.length || 0}`);
+        if (driveVideos.length > 0) console.log('[Gallery Debug] First Drive Video ID:', driveVideos[0].id);
+        if (trackingData && trackingData.length > 0) console.log('[Gallery Debug] First Tracking ID:', trackingData[0].drive_file_id);
+
         const videos = driveVideos.map(video => {
             const tracking = trackingData?.find(t => t.drive_file_id === video.id);
+            // Log mismatch for the first video only to avoid spam
+            if (video === driveVideos[0]) {
+                console.log('[Gallery Debug] Matching first video:', {
+                    videoId: video.id,
+                    foundTracking: !!tracking,
+                    trackingStatus: tracking?.is_posted
+                });
+            }
             return {
                 ...video,
                 isPosted: tracking ? tracking.is_posted : false
@@ -206,27 +218,46 @@ app.post('/api/gallery/toggle-posted', authenticateToken, async (req, res) => {
 
         console.log('[Toggle Posted] Existing record:', existing);
 
-        const { data, error } = await supabase
-            .from('gallery_tracking')
-            .upsert({
-                user_id: req.user.id,
-                drive_file_id,
-                is_posted,
-                created_at: existing ? existing.created_at : new Date().toISOString() // Manter data original se existir
-            }, { onConflict: 'user_id, drive_file_id' })
-            .select()
-            .single();
+        let result;
 
-        if (error) {
-            console.error('[Toggle Posted] Error upserting:', error);
-            throw error;
+        if (existing) {
+            // 2. Atualizar se existir
+            console.log('[Toggle Posted] Updating existing record...');
+            const { data, error } = await supabase
+                .from('gallery_tracking')
+                .update({ is_posted })
+                .eq('id', existing.id)
+                .select()
+                .single();
+
+            if (error) throw error;
+            result = data;
+        } else {
+            // 3. Inserir se não existir
+            console.log('[Toggle Posted] Inserting new record...');
+            const { data, error } = await supabase
+                .from('gallery_tracking')
+                .insert([{
+                    user_id: req.user.id,
+                    drive_file_id,
+                    is_posted
+                }])
+                .select()
+                .single();
+
+            if (error) throw error;
+            result = data;
         }
 
-        console.log('[Toggle Posted] Success:', data);
-        res.json({ success: true, data });
+        console.log('[Toggle Posted] Success:', result);
+        res.json({ success: true, data: result });
     } catch (error) {
         console.error('Erro ao atualizar status:', error);
-        res.status(500).json({ error: 'Erro ao atualizar status' });
+        res.status(500).json({
+            error: 'Erro ao atualizar status',
+            details: error.message || JSON.stringify(error),
+            hint: 'Verifique o console do servidor para mais detalhes.'
+        });
     }
 });
 
