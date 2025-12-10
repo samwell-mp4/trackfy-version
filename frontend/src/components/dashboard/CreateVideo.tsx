@@ -107,10 +107,20 @@ export const CreateVideo: React.FC = () => {
                 throw new Error('Falha ao iniciar geração do vídeo');
             }
 
-            setNotification({
-                type: 'success',
-                message: 'Solicitação enviada com sucesso! Seu vídeo será gerado em breve.'
-            });
+            const result = await n8nResponse.json();
+
+            if (result.result && result.result.complete === 'true') {
+                setNotification({
+                    type: 'success',
+                    message: 'O seus vídeos foi adicionado a sua galeria com sucesso.'
+                });
+            } else {
+                setNotification({
+                    type: 'success',
+                    message: 'Solicitação enviada! Aguarde o processamento.'
+                });
+            }
+
             setImages([]);
             setCustomPhrase('');
         } catch (error) {
@@ -140,6 +150,7 @@ export const CreateVideo: React.FC = () => {
                                 checked={autoPhrase}
                                 onChange={setAutoPhrase}
                                 label={autoPhrase ? 'Ativado' : 'Desativado'}
+                                disabled={isGenerating}
                             />
                         </div>
 
@@ -152,6 +163,7 @@ export const CreateVideo: React.FC = () => {
                                     value={customPhrase}
                                     onChange={(e) => setCustomPhrase(e.target.value)}
                                     rows={4}
+                                    disabled={isGenerating}
                                 />
                                 <span className="input-helper">
                                     Essas frases serão usadas para gerar o conteúdo do vídeo.
@@ -170,6 +182,7 @@ export const CreateVideo: React.FC = () => {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setIsModalOpen(true)}
+                                disabled={isGenerating}
                             >
                                 + Adicionar Imagem
                             </Button>
@@ -183,6 +196,7 @@ export const CreateVideo: React.FC = () => {
                                         <button
                                             className="remove-image-btn"
                                             onClick={() => removeImage(index)}
+                                            disabled={isGenerating}
                                         >
                                             ×
                                         </button>
@@ -210,9 +224,9 @@ export const CreateVideo: React.FC = () => {
                     size="lg"
                     onClick={handleGenerateVideo}
                     isLoading={isGenerating}
-                    disabled={images.length === 0}
+                    disabled={images.length === 0 || isGenerating}
                 >
-                    Gerar Vídeo
+                    {isGenerating ? 'Gerando Vídeo...' : 'Gerar Vídeo'}
                 </Button>
             </div>
 
