@@ -9,6 +9,7 @@ interface Video {
     downloadLink: string;
     createdAt: string;
     size: string;
+    mimeType?: string;
 }
 
 export const Gallery: React.FC = () => {
@@ -17,31 +18,33 @@ export const Gallery: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchVideos = async () => {
-            try {
-                // Use VITE_BACKEND_URL if available, otherwise relative path (proxy in dev, direct in prod)
-                const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
-                const response = await fetch(`${backendUrl}/api/gallery`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Falha ao carregar vídeos');
+    const fetchVideos = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            // Use VITE_BACKEND_URL if available, otherwise relative path (proxy in dev, direct in prod)
+            const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
+            const response = await fetch(`${backendUrl}/api/gallery`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
+            });
 
-                const data = await response.json();
-                setVideos(data.videos || []);
-            } catch (err) {
-                console.error('Erro ao buscar vídeos:', err);
-                setError('Não foi possível carregar sua galeria no momento.');
-            } finally {
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error('Falha ao carregar vídeos');
             }
-        };
 
+            const data = await response.json();
+            setVideos(data.videos || []);
+        } catch (err) {
+            console.error('Erro ao buscar vídeos:', err);
+            setError('Não foi possível carregar sua galeria no momento.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         if (token) {
             fetchVideos();
         }
@@ -51,15 +54,34 @@ export const Gallery: React.FC = () => {
         return new Date(dateString).toLocaleDateString('pt-BR', {
             day: '2-digit',
             month: '2-digit',
-            year: 'numeric'
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
+    };
+
+    const formatSize = (bytes: string) => {
+        const size = parseInt(bytes);
+        if (isNaN(size)) return 'N/A';
+        const i = Math.floor(Math.log(size) / Math.log(1024));
+        return (size / Math.pow(1024, i)).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
     };
 
     return (
         <div className="dashboard-card gallery-card">
             <div className="card-header">
-                <h2>Minha Galeria</h2>
-                <p>Seus vídeos gerados e salvos no Google Drive.</p>
+                <div>
+                    <h2>Minha Galeria</h2>
+                    <p>Seus vídeos gerados e salvos no Google Drive.</p>
+                </div>
+                <button
+                    onClick={fetchVideos}
+                    className="refresh-btn"
+                    disabled={loading}
+                    title="Atualizar lista"
+                >
+                    🔄
+                </button>
             </div>
 
             {loading ? (
@@ -69,6 +91,7 @@ export const Gallery: React.FC = () => {
             ) : error ? (
                 <div className="error-state">
                     <p>{error}</p>
+                    <button onClick={fetchVideos} className="retry-btn">Tentar Novamente</button>
                 </div>
             ) : videos.length === 0 ? (
                 <div className="empty-state">
@@ -105,7 +128,11 @@ export const Gallery: React.FC = () => {
                             <div className="video-info">
                                 <h3 className="video-title" title={video.name}>{video.name}</h3>
                                 <div className="video-meta">
-                                    <span>{formatDate(video.createdAt)}</span>
+                                    <span>📅 {formatDate(video.createdAt)}</span>
+                                    <span>💾 {formatSize(video.size)}</span>
+                                    <span className="text-xs text-gray-400 block mt-1" title={video.mimeType}>
+                                        Type: {video.mimeType?.split('/').pop() || 'Unknown'}
+                                    </span>
                                 </div>
                                 <div className="video-actions">
 

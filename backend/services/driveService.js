@@ -67,13 +67,19 @@ async function listUserVideos(userId) {
         allFiles.forEach(f => console.log(`Arquivo: ${f.name} (${f.mimeType})`));
 
         // Filtrar apenas videos mp4 (ou o que o usuário quiser)
-        const files = allFiles.filter(f => f.mimeType.includes('video') || f.name.endsWith('.mp4'));
+        // Adicionando application/octet-stream pois as vezes o n8n salva sem mimetype correto
+        const files = allFiles.filter(f =>
+            f.mimeType.includes('video') ||
+            f.name.endsWith('.mp4') ||
+            f.mimeType === 'application/octet-stream'
+        );
         console.log(`Vídeos filtrados: ${files.length}`);
 
         // Processar e retornar os arquivos
         return files.map(file => ({
             id: file.id,
             name: file.name,
+            mimeType: file.mimeType, // Adicionado mimeType
             // Tenta usar o link da API, se não, constrói um link público de thumbnail
             thumbnail: file.thumbnailLink || `https://drive.google.com/thumbnail?id=${file.id}&sz=w600`,
             downloadLink: file.webContentLink, // Link para baixar
