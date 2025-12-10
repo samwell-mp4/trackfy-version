@@ -7,7 +7,7 @@ import { Toggle } from '@components/common/Toggle';
 import { ImageUpload } from '@components/dashboard/ImageUpload';
 
 export const CreateVideo: React.FC = () => {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [images, setImages] = useState<string[]>([]);
     const [autoPhrase, setAutoPhrase] = useState(true);
