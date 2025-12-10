@@ -189,25 +189,40 @@ app.get('/api/gallery', authenticateToken, async (req, res) => {
 app.post('/api/gallery/toggle-posted', authenticateToken, async (req, res) => {
     const { drive_file_id, is_posted } = req.body;
 
+    console.log(`[Toggle Posted] User: ${req.user.id}, File: ${drive_file_id}, Status: ${is_posted}`);
+
     if (!drive_file_id) {
         return res.status(400).json({ error: 'ID do arquivo é obrigatório' });
     }
 
     try {
+        // Primeiro verificamos se já existe para debug
+        const { data: existing } = await supabase
+            .from('gallery_tracking')
+            .select('*')
+            .eq('user_id', req.user.id)
+            .eq('drive_file_id', drive_file_id)
+            .single();
+
+        console.log('[Toggle Posted] Existing record:', existing);
+
         const { data, error } = await supabase
             .from('gallery_tracking')
             .upsert({
                 user_id: req.user.id,
                 drive_file_id,
-                is_posted
+                is_posted,
+                created_at: existing ? existing.created_at : new Date().toISOString() // Manter data original se existir
             }, { onConflict: 'user_id, drive_file_id' })
             .select()
             .single();
 
         if (error) {
+            console.error('[Toggle Posted] Error upserting:', error);
             throw error;
         }
 
+        console.log('[Toggle Posted] Success:', data);
         res.json({ success: true, data });
     } catch (error) {
         console.error('Erro ao atualizar status:', error);
