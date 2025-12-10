@@ -76,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const value: AuthContextType = {
         user,
+        token: localStorage.getItem('videosia_token'),
         isAuthenticated: !!user,
         isLoading,
         login,

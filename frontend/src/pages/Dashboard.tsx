@@ -3,11 +3,12 @@ import { useAuth } from '@hooks/useAuth';
 import { Sidebar } from '@components/dashboard/Sidebar';
 import { CreateVideo } from '@components/dashboard/CreateVideo';
 import { Gallery } from '@components/dashboard/Gallery';
+import { YouTubeHighlights } from '@components/dashboard/YouTubeHighlights';
 import './Dashboard.css';
 
 export const Dashboard: React.FC = () => {
     const { user, logout } = useAuth();
-    const [activeView, setActiveView] = useState<'create' | 'gallery'>('create');
+    const [activeView, setActiveView] = useState<'create' | 'gallery' | 'highlights'>('create');
 
     return (
         <div className="dashboard">
@@ -22,7 +23,9 @@ export const Dashboard: React.FC = () => {
                 <Sidebar activeView={activeView} onNavigate={setActiveView} />
 
                 <div className="dashboard-content">
-                    {activeView === 'create' ? <CreateVideo /> : <Gallery />}
+                    {activeView === 'create' && <CreateVideo />}
+                    {activeView === 'gallery' && <Gallery />}
+                    {activeView === 'highlights' && <YouTubeHighlights />}
                 </div>
             </div>
         </div>

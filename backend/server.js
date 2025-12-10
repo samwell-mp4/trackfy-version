@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { createClient } = require('@supabase/supabase-js');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -71,7 +73,10 @@ const authenticateToken = (req, res, next) => {
     if (!token) return res.sendStatus(401);
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
+        if (err) {
+            console.error('Erro de autenticação:', err.message);
+            return res.sendStatus(403);
+        }
         req.user = user;
         next();
     });
@@ -141,6 +146,23 @@ app.get('/api/video-requests', authenticateToken, async (req, res) => {
     }
 });
 
+// Importar serviço do Google Drive
+const driveService = require('./services/driveService');
+
+// Rota da Galeria (Google Drive)
+app.get('/api/gallery', authenticateToken, async (req, res) => {
+    try {
+        const videos = await driveService.listUserVideos(req.user.id);
+        res.json({ videos });
+    } catch (error) {
+        console.error('Erro na rota da galeria:', error);
+        res.status(500).json({
+            error: 'Erro ao carregar galeria',
+            details: error.message
+        });
+    }
+});
+
 // Rota de teste protegida
 app.get('/me', authenticateToken, (req, res) => {
     res.json({ message: 'Acesso autorizado', user: req.user });
@@ -200,14 +222,51 @@ app.post('/api/trigger-n8n', authenticateToken, async (req, res) => {
     }
 });
 
+// Servir arquivos de destaques (gerados pelo backend)
+app.use('/highlights', express.static(path.join(__dirname, 'public/highlights')));
+
+// Serviço de YouTube
+const youtubeService = require('./services/youtubeService');
+
+// Rota para gerar destaques do YouTube
+app.post('/api/youtube-highlights', authenticateToken, async (req, res) => {
+    const { url } = req.body;
+
+    if (!url) {
+        return res.status(400).json({ error: 'URL do YouTube é obrigatória' });
+    }
+
+    try {
+        // 1. Baixar vídeo
+        console.log(`Recebida requisição de destaques para: ${url}`);
+        const videoPath = await youtubeService.downloadVideo(url);
+
+        // 2. Extrair destaques
+        console.log(`Vídeo baixado em: ${videoPath}. Iniciando extração...`);
+        const highlights = await youtubeService.extractHighlights(videoPath);
+
+        // 3. Retornar caminhos (URLs relativas)
+        console.log('Destaques gerados:', highlights);
+        res.json({ success: true, highlights });
+
+        // Opcional: Limpar vídeo original após processamento para economizar espaço
+        // fs.unlinkSync(videoPath); 
+
+    } catch (error) {
+        console.error('Erro ao processar destaques:', error);
+        res.status(500).json({
+            error: 'Erro ao processar vídeo',
+            details: error.message
+        });
+    }
+});
+
 // Health check para monitoramento
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Servir arquivos estáticos do frontend (build do Vite)
-const path = require('path');
-const fs = require('fs');
 const frontendPath = path.join(__dirname, '../frontend/dist');
 
 // Verificar se o build do frontend existe

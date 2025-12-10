@@ -6,7 +6,7 @@ import { Toggle } from '@components/common/Toggle';
 import { ImageUpload } from '@components/dashboard/ImageUpload';
 
 export const CreateVideo: React.FC = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [images, setImages] = useState<string[]>([]);
     const [autoPhrase, setAutoPhrase] = useState(true);
@@ -60,6 +60,14 @@ export const CreateVideo: React.FC = () => {
             });
 
             if (!saveResponse.ok) {
+                if (saveResponse.status === 403) {
+                    logout();
+                    setNotification({
+                        type: 'error',
+                        message: 'Sessão expirada. Por favor, faça login novamente.'
+                    });
+                    return;
+                }
                 throw new Error('Erro ao salvar requisição');
             }
 
@@ -88,6 +96,14 @@ export const CreateVideo: React.FC = () => {
             });
 
             if (!n8nResponse.ok) {
+                if (n8nResponse.status === 403) {
+                    logout();
+                    setNotification({
+                        type: 'error',
+                        message: 'Sessão expirada. Por favor, faça login novamente.'
+                    });
+                    return;
+                }
                 throw new Error('Falha ao iniciar geração do vídeo');
             }
 

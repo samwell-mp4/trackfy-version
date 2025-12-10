@@ -2,8 +2,8 @@ import React from 'react';
 import { Button } from '@components/common/Button';
 
 interface SidebarProps {
-    activeView: 'create' | 'gallery';
-    onNavigate: (view: 'create' | 'gallery') => void;
+    activeView: 'create' | 'gallery' | 'highlights';
+    onNavigate: (view: 'create' | 'gallery' | 'highlights') => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
@@ -27,6 +27,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
                     {...({ 'data-variant': activeView === 'gallery' ? 'primary' : 'outline' } as any)}
                 >
                     Galeria
+                </Button>
+                <Button
+                    variant={activeView === 'highlights' ? 'primary' : 'outline'}
+                    fullWidth
+                    onClick={() => onNavigate('highlights')}
+                    className="sidebar-btn"
+                    {...({ 'data-variant': activeView === 'highlights' ? 'primary' : 'outline' } as any)}
+                >
+                    Destaques YouTube
                 </Button>
             </div>
         </div>
