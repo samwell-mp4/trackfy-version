@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, type ReactNode, useEffect } from 'react';
+import React, { createContext, useState, useContext, type ReactNode } from 'react';
 import { useAuth } from '../hooks/useAuth'; // Assuming this hook exists
 
 interface VideoContextType {
@@ -26,7 +26,6 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [isGenerating, setIsGenerating] = useState(false);
     const [generationStatus, setGenerationStatus] = useState<'idle' | 'generating' | 'success' | 'error'>('idle');
     const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-    const { token } = useAuth(); // Get token from AuthContext
 
     const clearNotification = () => {
         setNotification(null);
