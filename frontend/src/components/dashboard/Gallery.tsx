@@ -261,18 +261,33 @@ export const Gallery: React.FC = () => {
                                         {downloadedVideos.has(video.id) ? 'Baixado' : 'Baixar'}
                                     </a>
                                 </div>
-                                <div className="video-status-toggle">
-                                    <label className="toggle-label">
-                                        <input
-                                            type="checkbox"
-                                            checked={!!video.isPosted}
-                                            onChange={() => togglePosted(video)}
-                                        />
-                                        <span className="toggle-slider"></span>
-                                        <span className="toggle-text">
-                                            {video.isPosted ? 'Postado ✅' : 'Marcar como Postado'}
-                                        </span>
-                                    </label>
+
+                                <div className="social-actions">
+                                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="social-btn instagram" title="Postar no Instagram">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
+                                    </a>
+                                    <a href="https://www.tiktok.com/upload" target="_blank" rel="noopener noreferrer" className="social-btn tiktok" title="Postar no TikTok">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" /></svg>
+                                    </a>
+                                    <a href="https://studio.youtube.com/" target="_blank" rel="noopener noreferrer" className="social-btn youtube" title="Postar no YouTube">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" /></svg>
+                                    </a>
+                                    <a href="https://www.kwai.com/" target="_blank" rel="noopener noreferrer" className="social-btn kwai" title="Postar no Kwai">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14H15v-4.5h-1.5V16H12v-6h1.5v4.5H15V10h1.5v6z" /> <text x="6" y="17" fontSize="14" fontWeight="bold" fill="currentColor">K</text></svg>
+                                    </a>
+                                    <div className="video-status-toggle">
+                                        <label className="toggle-label">
+                                            <input
+                                                type="checkbox"
+                                                checked={!!video.isPosted}
+                                                onChange={() => togglePosted(video)}
+                                            />
+                                            <span className="toggle-slider"></span>
+                                            <span className="toggle-text">
+                                                {video.isPosted ? 'Postado ✅' : 'Marcar como Postado'}
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

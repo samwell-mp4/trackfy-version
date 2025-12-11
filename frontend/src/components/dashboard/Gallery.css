@@ -264,6 +264,52 @@
     color: #34d399;
 }
 
+/* Social Actions */
+.social-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    justify-content: space-between;
+}
+
+.social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 8px;
+    color: #fff;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.social-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+.social-btn.instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    border: none;
+}
+
+.social-btn.tiktok {
+    background: #000;
+    border-color: #333;
+}
+
+.social-btn.youtube {
+    background: #ff0000;
+    border-color: #cc0000;
+}
+
+.social-btn.kwai {
+    background: #ff8f00;
+    border-color: #e65100;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .gallery-grid {
