@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import { useVideo } from '@contexts/VideoContext';
 import { Button } from '@components/common/Button';
@@ -13,6 +13,17 @@ export const CreateVideo: React.FC = () => {
     const [autoPhrase, setAutoPhrase] = useState(true);
     const [customPhrase, setCustomPhrase] = useState('');
     const { isGenerating, generateVideo, notification, clearNotification } = useVideo();
+    const [cooldown, setCooldown] = useState(0);
+
+    useEffect(() => {
+        let interval: any;
+        if (cooldown > 0) {
+            interval = setInterval(() => {
+                setCooldown((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [cooldown]);
 
     const handleImageSelect = (base64: string) => {
         setImages(prev => [...prev, base64]);
@@ -25,28 +36,6 @@ export const CreateVideo: React.FC = () => {
 
     const handleGenerateVideo = async () => {
         if (images.length === 0) {
-            // Notifications are now handled globally, but for validation we might want a local alert or use the global one if exposed
-            // For now, let's assume we can't set global notification from here easily without exposing a setter, 
-            // but the plan was to move state. Let's check if we exposed a setter. 
-            // We didn't expose setNotification. We should probably just return or handle it differently.
-            // Actually, the plan said "Consume notification and clearNotification".
-            // Let's just log for now or if we want to show error we need to expose setNotification or add a helper in context.
-            // But wait, the context has `notification` state.
-            // Let's assume for validation we just don't proceed. 
-            // OR better, let's update the context to allow setting notification for validation errors?
-            // No, keeping it simple. The user didn't ask for validation errors to persist.
-            // I'll just alert for now or ignore since I can't set global notification.
-            // Wait, I can't set notification from here. 
-            // I should have added `setNotification` or `showNotification` to context.
-            // Let's stick to the plan which was "Update generateVideo to set notification state directly".
-            // For validation errors, I'll just use `alert` or similar for now to avoid changing context again, 
-            // OR I can just skip validation feedback for a moment? No that's bad UX.
-            // I will assume for this step I will just return. 
-            // Actually, I should probably add `showNotification` to context in a follow up if needed.
-            // But wait, the previous code used `setNotification` for validation.
-            // I'll just use `window.alert` for validation errors for now to be safe, or just console.error.
-            // Re-reading `VideoContext.tsx` changes: I did NOT expose `setNotification`.
-            // I'll just return for now.
             return;
         }
 
@@ -63,6 +52,9 @@ export const CreateVideo: React.FC = () => {
             return;
         }
 
+        // Start cooldown immediately to prevent double submission
+        setCooldown(40);
+
         await generateVideo(
             token,
             backendUrl,
@@ -76,10 +68,6 @@ export const CreateVideo: React.FC = () => {
             }
         );
 
-        // Clear inputs on success (we can't know for sure if it succeeded here easily without checking notification, 
-        // but generateVideo is async and sets notification. 
-        // We can check if notification is success? No, state update might be async.
-        // Let's just clear inputs.
         setImages([]);
         setCustomPhrase('');
     };
@@ -100,7 +88,7 @@ export const CreateVideo: React.FC = () => {
                                 checked={autoPhrase}
                                 onChange={setAutoPhrase}
                                 label={autoPhrase ? 'Ativado' : 'Desativado'}
-                                disabled={isGenerating}
+                                disabled={isGenerating || cooldown > 0}
                             />
                         </div>
 
@@ -113,7 +101,7 @@ export const CreateVideo: React.FC = () => {
                                     value={customPhrase}
                                     onChange={(e) => setCustomPhrase(e.target.value)}
                                     rows={4}
-                                    disabled={isGenerating}
+                                    disabled={isGenerating || cooldown > 0}
                                 />
                                 <span className="input-helper">
                                     Essas frases serão usadas para gerar o conteúdo do vídeo.
@@ -132,7 +120,7 @@ export const CreateVideo: React.FC = () => {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setIsModalOpen(true)}
-                                disabled={isGenerating}
+                                disabled={isGenerating || cooldown > 0}
                             >
                                 + Adicionar Imagem
                             </Button>
@@ -146,7 +134,7 @@ export const CreateVideo: React.FC = () => {
                                         <button
                                             className="remove-image-btn"
                                             onClick={() => removeImage(index)}
-                                            disabled={isGenerating}
+                                            disabled={isGenerating || cooldown > 0}
                                         >
                                             ×
                                         </button>
@@ -174,9 +162,13 @@ export const CreateVideo: React.FC = () => {
                     size="lg"
                     onClick={handleGenerateVideo}
                     isLoading={isGenerating}
-                    disabled={images.length === 0 || isGenerating}
+                    disabled={images.length === 0 || isGenerating || cooldown > 0}
                 >
-                    {isGenerating ? 'Gerando Vídeo...' : 'Gerar Vídeo'}
+                    {cooldown > 0
+                        ? `Aguarde ${cooldown}s para criar outro...`
+                        : isGenerating
+                            ? 'Gerando Vídeo...'
+                            : 'Gerar Vídeo'}
                 </Button>
             </div>
 
