@@ -114,6 +114,18 @@ export const Gallery: React.FC = () => {
 
     const [showDebug, setShowDebug] = useState(false);
 
+    const [downloadedVideos, setDownloadedVideos] = useState<Set<string>>(() => {
+        const saved = localStorage.getItem('downloadedVideos');
+        return new Set(saved ? JSON.parse(saved) : []);
+    });
+
+    const handleDownload = (videoId: string) => {
+        const newSet = new Set(downloadedVideos);
+        newSet.add(videoId);
+        setDownloadedVideos(newSet);
+        localStorage.setItem('downloadedVideos', JSON.stringify(Array.from(newSet)));
+    };
+
     return (
         <div className="dashboard-card gallery-card">
             <div className="card-header">
@@ -242,9 +254,11 @@ export const Gallery: React.FC = () => {
                                         href={video.downloadLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="btn-download"
+                                        className={`btn-download ${downloadedVideos.has(video.id) ? 'downloaded' : ''}`}
+                                        onClick={() => handleDownload(video.id)}
                                     >
-                                        <span>⬇</span> Baixar
+                                        <span>{downloadedVideos.has(video.id) ? '✅' : '⬇'}</span>
+                                        {downloadedVideos.has(video.id) ? 'Baixado' : 'Baixar'}
                                     </a>
                                 </div>
                                 <div className="video-status-toggle">

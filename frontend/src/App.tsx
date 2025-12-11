@@ -9,10 +9,14 @@ import { useVideo } from '@contexts/VideoContext';
 import '@styles/global.css';
 
 const AppContent = () => {
-  const { isGenerating, generationStatus } = useVideo();
+  const { isGenerating, generationStatus, notification } = useVideo();
   return (
     <>
-      <StatusPopup isVisible={isGenerating || generationStatus === 'success'} status={generationStatus} />
+      <StatusPopup
+        isVisible={isGenerating || generationStatus === 'success' || !!notification}
+        status={generationStatus}
+        notification={notification}
+      />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route

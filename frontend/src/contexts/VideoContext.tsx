@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext, type ReactNode } from 'react';
+import React, { createContext, useState, useContext, type ReactNode, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 
 interface VideoContextType {
@@ -26,6 +27,7 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [isGenerating, setIsGenerating] = useState(false);
     const [generationStatus, setGenerationStatus] = useState<'idle' | 'generating' | 'success' | 'error'>('idle');
     const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+    const { token } = useAuth();
 
     const clearNotification = () => {
         setNotification(null);
@@ -111,6 +113,49 @@ export const VideoProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             setNotification({ type: 'error', message: error.message || 'Erro ao enviar solicitação.' });
         }
     };
+
+    // Background polling for new videos
+    useEffect(() => {
+        if (!token) return;
+
+        let lastVideoCount = 0;
+        const checkNewVideos = async () => {
+            try {
+                // Use VITE_BACKEND_URL if available, otherwise relative path
+                const backendUrl = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
+                const response = await fetch(`${backendUrl}/api/gallery`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const currentCount = data.videos?.length || 0;
+
+                    // Only notify if count INCREASED (and it's not the first load)
+                    if (lastVideoCount > 0 && currentCount > lastVideoCount) {
+                        setNotification({
+                            type: 'success',
+                            message: 'Novo vídeo chegou na galeria! 🎉'
+                        });
+                        // Clear notification after 5s
+                        setTimeout(() => setNotification(null), 5000);
+                    }
+
+                    lastVideoCount = currentCount;
+                }
+            } catch (err) {
+                console.error('Background poll error:', err);
+            }
+        };
+
+        // Initial check
+        checkNewVideos();
+
+        // Poll every 15 seconds
+        const interval = setInterval(checkNewVideos, 15000);
+
+        return () => clearInterval(interval);
+    }, [token]);
 
     return (
         <VideoContext.Provider value={{ isGenerating, generationStatus, generateVideo, notification, clearNotification }}>
