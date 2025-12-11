@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, type ReactNode } from 'react';
-import { useAuth } from '../hooks/useAuth'; // Assuming this hook exists
+
 
 interface VideoContextType {
     isGenerating: boolean;
