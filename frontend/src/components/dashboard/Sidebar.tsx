@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@components/common/Button';
+import { Video, Image, Youtube, Music, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
     activeView: 'create' | 'gallery' | 'highlights';
@@ -10,48 +10,40 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
     const navigate = useNavigate();
 
+    const menuItems = [
+        { id: 'create', label: 'Criar Vídeo', icon: Video },
+        { id: 'gallery', label: 'Galeria', icon: Image },
+        { id: 'highlights', label: 'Destaques YouTube', icon: Youtube },
+    ];
+
     return (
         <div className="dashboard-sidebar">
             <div className="sidebar-nav">
-                <Button
-                    variant={activeView === 'create' ? 'primary' : 'outline'}
-                    fullWidth
-                    onClick={() => onNavigate('create')}
-                    className="sidebar-btn"
-                    {...({ 'data-variant': activeView === 'create' ? 'primary' : 'outline' } as any)}
-                >
-                    Criar Vídeo
-                </Button>
-                <Button
-                    variant={activeView === 'gallery' ? 'primary' : 'outline'}
-                    fullWidth
-                    onClick={() => onNavigate('gallery')}
-                    className="sidebar-btn"
-                    {...({ 'data-variant': activeView === 'gallery' ? 'primary' : 'outline' } as any)}
-                >
-                    Galeria
-                </Button>
-                <Button
-                    variant={activeView === 'highlights' ? 'primary' : 'outline'}
-                    fullWidth
-                    onClick={() => onNavigate('highlights')}
-                    className="sidebar-btn"
-                    {...({ 'data-variant': activeView === 'highlights' ? 'primary' : 'outline' } as any)}
-                >
-                    Destaques YouTube
-                </Button>
+                {menuItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = activeView === item.id;
+                    return (
+                        <button
+                            key={item.id}
+                            className={`sidebar-btn ${isActive ? 'active' : ''}`}
+                            onClick={() => onNavigate(item.id as any)}
+                        >
+                            <Icon size={20} />
+                            <span>{item.label}</span>
+                            {isActive && <ChevronRight size={16} className="active-indicator" />}
+                        </button>
+                    );
+                })}
 
-                <div style={{ margin: '20px 0', borderTop: '1px solid #333' }}></div>
+                <div className="sidebar-divider"></div>
 
-                <Button
-                    variant="outline"
-                    fullWidth
+                <button
+                    className="sidebar-btn artist-hub-btn"
                     onClick={() => navigate('/artist-hub')}
-                    className="sidebar-btn"
-                    style={{ borderColor: '#00d4ff', color: '#00d4ff' }}
                 >
-                    🎸 Artista Hub
-                </Button>
+                    <Music size={20} />
+                    <span>Ir para Artista Hub</span>
+                </button>
             </div>
         </div>
     );
