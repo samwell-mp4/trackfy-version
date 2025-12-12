@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 interface Step5Props {
     data: any;
@@ -6,7 +6,6 @@ interface Step5Props {
 }
 
 export const Step5Upload: React.FC<Step5Props> = ({ data, updateData }) => {
-    const audioRef = useRef<HTMLAudioElement>(null);
 
     const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

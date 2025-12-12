@@ -27,7 +27,7 @@ interface TrackChecklistsProps {
     trackTitle: string;
 }
 
-export const TrackChecklists: React.FC<TrackChecklistsProps> = ({ trackId, trackTitle }) => {
+export const TrackChecklists: React.FC<TrackChecklistsProps> = ({ trackId }) => {
     const [checklists, setChecklists] = useState<Checklist[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedChecklistIds, setExpandedChecklistIds] = useState<Set<string>>(new Set());
