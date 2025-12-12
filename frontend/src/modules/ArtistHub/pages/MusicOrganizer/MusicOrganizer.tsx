@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@components/common/Button';
 import { artistHubService } from '../../../../services/artistHubService';
 import './MusicOrganizer.css';
 
@@ -12,10 +11,50 @@ import { Step4Rights } from './steps/Step4Rights';
 import { Step5Upload } from './steps/Step5Upload';
 import { Step6Summary } from './steps/Step6Summary';
 
+interface ArtistData {
+    id?: string;
+    name: string;
+    full_name?: string;
+    cpf?: string;
+    rg?: string;
+    email?: string;
+    instagram?: string;
+    isNew?: boolean;
+}
+
+interface Participant {
+    name: string;
+    role: string;
+    observation?: string;
+}
+
+interface Right {
+    id: string;
+    name: string;
+    role: string;
+    percentage: number;
+}
+
+interface FormData {
+    title: string;
+    subtitle: string;
+    genre: string;
+    releaseDate: string;
+    coverImage: File | null;
+    coverPreview: string;
+    explicit: boolean;
+    mainArtist: ArtistData | null;
+    participants: Participant[];
+    rights: Right[];
+    audioFile: File | null;
+    audioUrl: string;
+    duration: number;
+}
+
 export const MusicOrganizer: React.FC = () => {
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(1);
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         // Step 1
         title: '',
         subtitle: '',

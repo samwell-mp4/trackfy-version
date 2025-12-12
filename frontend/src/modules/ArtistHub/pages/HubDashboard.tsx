@@ -28,7 +28,7 @@ export const HubDashboard: React.FC = () => {
         completedTasks: 0,
         totalTasks: 0
     });
-    const [recentTracks, setRecentTracks] = useState<any[]>([]);
+    // const [recentTracks, setRecentTracks] = useState<any[]>([]); // Unused
     const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
     const [financials, setFinancials] = useState({
         revenue: 0,
@@ -37,7 +37,7 @@ export const HubDashboard: React.FC = () => {
         topExpenses: [] as Transaction[],
         topInvestment: { category: '', amount: 0 }
     });
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true); // Unused
 
     const navigate = useNavigate();
 
@@ -120,7 +120,7 @@ export const HubDashboard: React.FC = () => {
             });
 
             // Recent Tracks (Last 3)
-            setRecentTracks(tracks.slice(-3).reverse());
+            // setRecentTracks(tracks.slice(-3).reverse()); // Unused
 
             // Upcoming Events (Next 3)
             const now = new Date();
@@ -133,7 +133,7 @@ export const HubDashboard: React.FC = () => {
         } catch (error) {
             console.error('Error loading dashboard data:', error);
         } finally {
-            setLoading(false);
+            // setLoading(false); // Unused
         }
     };
 
