@@ -123,6 +123,7 @@ export const Checklists: React.FC = () => {
     };
 
     const deleteChecklist = async (id: string) => {
+        // alert(`Tentando excluir checklist: ${id}`);
         if (!confirm('Tem certeza que deseja excluir esta lista?')) return;
         try {
             await artistHubService.deleteChecklist(id);
@@ -130,6 +131,7 @@ export const Checklists: React.FC = () => {
             if (selectedChecklist?.id === id) setSelectedChecklist(null);
         } catch (error) {
             console.error('Error deleting checklist:', error);
+            alert('Erro ao excluir checklist. Verifique o console.');
         }
     };
 

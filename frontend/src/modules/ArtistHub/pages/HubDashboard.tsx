@@ -257,26 +257,24 @@ export const HubDashboard: React.FC = () => {
 
                 <div className="glass-card" style={{ gridColumn: 'span 4' }}>
                     <div className="card-header">
-                        <span className="card-title">Últimos Lançamentos</span>
-                        <button className="badge badge-new" onClick={() => navigate('/artist-hub/tracks')}>Ver Tudo</button>
+                        <span className="card-title">Maior Investimento</span>
+                        <div className="card-icon">📈</div>
                     </div>
-                    <div className="widget-list">
-                        {recentTracks.length === 0 ? (
-                            <p style={{ color: 'var(--text-secondary)', fontStyle: 'italic' }}>Nenhuma música lançada.</p>
-                        ) : (
-                            recentTracks.map((track: any) => (
-                                <div key={track.id} className="widget-item">
-                                    <div className="item-icon">🎵</div>
-                                    <div className="item-info">
-                                        <div className="item-title">{track.title}</div>
-                                        <div className="item-subtitle">
-                                            {track.artist || 'Artista Principal'}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
+                    {financials.topInvestment.amount > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                            <div style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                                Categoria Principal
+                            </div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
+                                {getCategoryLabel(financials.topInvestment.category)}
+                            </div>
+                            <div style={{ fontSize: '2rem', fontWeight: '800', color: '#ef4444' }}>
+                                {formatCurrency(financials.topInvestment.amount)}
+                            </div>
+                        </div>
+                    ) : (
+                        <p style={{ color: 'var(--text-secondary)', fontStyle: 'italic' }}>Sem dados de investimento.</p>
+                    )}
                 </div>
 
                 {/* Financial Overview Section - REDESIGNED STRIP */}

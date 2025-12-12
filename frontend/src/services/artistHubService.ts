@@ -33,12 +33,58 @@ export const artistHubService = {
     getArtists: () => request('/artists'),
     createArtist: (data: any) => request('/artists', { method: 'POST', body: JSON.stringify(data) }),
 
+    // Files
+    uploadFile: async (file: File) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                try {
+                    const token = localStorage.getItem('videosia_token');
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            file: reader.result,
+                            filename: file.name,
+                            type: file.type
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('Upload failed');
+                    const data = await response.json();
+                    resolve(data);
+                } catch (e) { reject(e); }
+            };
+            reader.onerror = error => reject(error);
+        });
+    },
+
+
+
     // Tracks
     getTracks: (artistId?: string) => request(`/tracks${artistId ? `?artist_id=${artistId}` : ''}`),
     getTrack: (id: string) => request(`/tracks/${id}`),
     createTrack: (data: any) => request('/tracks', { method: 'POST', body: JSON.stringify(data) }),
     updateTrack: (id: string, data: any) => request(`/tracks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteTrack: (id: string) => request(`/tracks/${id}`, { method: 'DELETE' }),
+
+    // Shared Tracks
+    getSharedTrack: async (token: string, password?: string) => {
+        const response = await fetch('/api/public/track/access', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, password })
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            throw error;
+        }
+        return response.json();
+    },
 
     // Events
     getEvents: (start?: string, end?: string) => {

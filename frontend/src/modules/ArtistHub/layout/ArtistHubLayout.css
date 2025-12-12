@@ -1,117 +1,284 @@
 .artist-hub-layout {
     display: flex;
     height: 100vh;
-    background: transparent;
-    /* Let body background show through */
-    color: var(--text-primary);
+    width: 100vw;
+    background-color: #0a0a0a;
+    /* Deep dark background */
+    color: #ffffff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow: hidden;
-    /* Prevent body scroll */
+    position: relative;
 }
 
+/* Sidebar Container */
 .hub-sidebar {
     width: 260px;
-    background: var(--bg-glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(20, 20, 20, 0.85);
+    /* Slightly more opaque for better contrast */
+    backdrop-filter: blur(20px);
+    /* Glassmorphism blur */
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
     padding: 24px;
-    border-right: 1px solid var(--border-glass);
-    margin: 16px;
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    height: 100vh;
 }
 
+/* Back Button / Logo Area */
 .hub-logo {
-    cursor: pointer;
-    margin-bottom: 32px;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    transition: color 0.2s;
     display: flex;
     align-items: center;
     gap: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 32px;
+    transition: color 0.2s ease;
+    padding: 8px 0;
 }
 
 .hub-logo:hover {
-    color: var(--text-primary);
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
+    color: #ffffff;
 }
 
-.hub-nav a {
-    text-decoration: none;
-    color: var(--text-secondary);
-    padding: 12px 16px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+/* Brand Section */
+.hub-brand {
     display: flex;
     align-items: center;
     gap: 12px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.brand-icon {
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Navigation */
+.hub-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+}
+
+.nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    padding-left: 12px;
+}
+
+.hub-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
     font-weight: 500;
-    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
 
 .hub-nav a:hover {
     background: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
+    color: #ffffff;
     transform: translateX(4px);
 }
 
 .hub-nav a.active {
-    background: rgba(139, 92, 246, 0.15);
-    color: #fff;
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.05));
+    color: #e879f9;
+    /* Pink/Purple accent */
+    border-left: 3px solid #d946ef;
     font-weight: 600;
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
 }
 
+.hub-nav a.active svg {
+    stroke: #d946ef;
+    filter: drop-shadow(0 0 8px rgba(217, 70, 239, 0.4));
+}
+
+/* Footer / Logout */
 .hub-footer {
     margin-top: auto;
     padding-top: 20px;
-    border-top: 1px solid var(--border-glass);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.logout-btn-small {
-    background: transparent;
-    border: 1px solid var(--border-glass);
-    color: var(--text-secondary);
-    padding: 10px;
-    border-radius: 12px;
-    cursor: pointer;
+.logout-btn-sidebar {
     width: 100%;
-    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
     font-size: 0.9rem;
 }
 
-.logout-btn-small:hover {
+.logout-btn-sidebar:hover {
     background: rgba(255, 50, 50, 0.1);
     border-color: rgba(255, 50, 50, 0.3);
     color: #ff6b6b;
 }
 
+/* Main Content Area */
 .hub-content {
     flex: 1;
-    padding: 30px 40px;
     overflow-y: auto;
+    background: radial-gradient(circle at top right, #1a1a2e, #0a0a0a);
+    /* Subtle gradient background */
+    position: relative;
+    width: 100%;
+}
+
+/* Scrollbar Styling */
+.hub-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.hub-nav::-webkit-scrollbar-track {
     background: transparent;
 }
 
-/* Scrollbar for content */
-.hub-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.hub-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.hub-content::-webkit-scrollbar-thumb {
+.hub-nav::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
 }
 
-.hub-content::-webkit-scrollbar-thumb:hover {
+.hub-nav::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+
+/* Mobile Header (Hidden on Desktop) */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(10, 10, 10, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 900;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 12px;
+}
+
+.mobile-brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 950;
+}
+
+/* Media Query for Tablets and Mobile */
+@media (max-width: 768px) {
+    .artist-hub-layout {
+        flex-direction: column;
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+
+    .mobile-overlay {
+        display: block;
+    }
+
+    .hub-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        /* Hidden by default */
+        width: 280px;
+        /* Slightly wider for touch */
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .hub-sidebar.open {
+        transform: translateX(0);
+        /* Slide in */
+    }
+
+    .hub-content {
+        padding-top: 60px;
+        /* Space for mobile header */
+        width: 100%;
+    }
 }

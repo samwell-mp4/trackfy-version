@@ -23,7 +23,8 @@ export default defineConfig({
     proxy: {
       '/login': 'http://localhost:8052',
       '/api': 'http://localhost:8052',
-      '/highlights': 'http://localhost:8052'
+      '/highlights': 'http://localhost:8052',
+      '/uploads': 'http://localhost:8052'
     }
   },
 })

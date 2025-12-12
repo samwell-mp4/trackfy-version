@@ -382,6 +382,103 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// --- FILE UPLOAD HANDLING ---
+const UPLOADS_DIR = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+app.use('/uploads', express.static(UPLOADS_DIR));
+
+app.post('/api/upload', authenticateToken, async (req, res) => {
+    try {
+        const { file, filename, type } = req.body;
+
+        if (!file || !filename) {
+            return res.status(400).json({ error: 'Arquivo e nome são obrigatórios' });
+        }
+
+        // Remove header do Base64 (ex: "data:image/png;base64,")
+        const base64Data = file.replace(/^data:.*,/, "");
+        const filePath = path.join(UPLOADS_DIR, `${Date.now()}_${filename}`);
+
+        fs.writeFile(filePath, base64Data, 'base64', (err) => {
+            if (err) {
+                console.error('Erro ao salvar arquivo:', err);
+                return res.status(500).json({ error: 'Erro ao salvar arquivo no disco' });
+            }
+
+            const publicUrl = `/uploads/${path.basename(filePath)}`;
+            res.json({ success: true, url: publicUrl });
+        });
+
+    } catch (error) {
+        console.error('Erro no upload:', error);
+        res.status(500).json({ error: 'Erro interno no upload' });
+    }
+});
+
+// --- PUBLIC SHARE ROUTES ---
+app.post('/api/public/track/access', async (req, res) => {
+    try {
+        const { token, password } = req.body;
+
+        if (!token) return res.status(400).json({ error: 'Token obrigatório' });
+
+        console.log('[Public Access] Searching for token:', token);
+
+        // Buscar track pelo token no metadata usando operador seta ->> (texto)
+        const { data: tracks, error } = await supabase
+            .from('tracks')
+            .select('*, artists(*)')
+            // Tenta buscar onde metadata->>share_token é igual ao token
+            .eq('metadata->>share_token', token);
+
+        if (error) {
+            console.error('[Public Access] DB Error:', error);
+            return res.status(500).json({ error: 'Erro no banco de dados' });
+        }
+
+        if (!tracks || tracks.length === 0) {
+            console.warn('[Public Access] Token not found:', token);
+            // Fallback: Tentar .contains caso a sintaxe ->> não funcione em algumas versões/configurações
+            const { data: fallbackTracks } = await supabase
+                .from('tracks')
+                .select('*, artists(*)')
+                .contains('metadata', { share_token: token });
+
+            if (!fallbackTracks || fallbackTracks.length === 0) {
+                return res.status(404).json({ error: 'Música não encontrada ou link inválido' });
+            }
+            // Se achou no fallback
+            console.log('[Public Access] Found via fallback .contains');
+            const track = fallbackTracks[0];
+            return handleTrackResponse(track, password, res);
+        }
+
+        const track = tracks[0];
+        handleTrackResponse(track, password, res);
+
+    } catch (error) {
+        console.error('Erro ao acessar link público:', error);
+        res.status(500).json({ error: 'Erro interno' });
+    }
+});
+
+function handleTrackResponse(track, password, res) {
+    const storedPassword = track.metadata.share_password;
+
+    // Verificar senha se existir
+    if (storedPassword && storedPassword !== password) {
+        return res.status(403).json({ error: 'Senha incorreta', requirePassword: true });
+    }
+
+    // Retornar dados
+    res.json(track);
+}
+
+
+
 // --- ARTISTA HUB ROUTES ---
 
 const artistService = require('./services/artistService');

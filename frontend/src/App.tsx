@@ -17,6 +17,9 @@ import { TrackList } from './modules/ArtistHub/pages/TrackList';
 import { MediaLibrary } from './modules/ArtistHub/pages/MediaLibrary';
 import { Artists } from './modules/ArtistHub/pages/Artists';
 import { Financial } from './modules/ArtistHub/pages/Financial';
+import { MusicOrganizer } from './modules/ArtistHub/pages/MusicOrganizer/MusicOrganizer';
+import { TrackDashboard } from './modules/ArtistHub/pages/TrackDashboard';
+import { SharedTrackView } from './modules/ArtistHub/pages/SharedTrackView';
 
 const AppContent = () => {
   const { isGenerating, generationStatus, notification } = useVideo();
@@ -29,6 +32,10 @@ const AppContent = () => {
       />
       <Routes>
         <Route path="/login" element={<Login />} />
+
+        {/* Public Shared Route */}
+        <Route path="/shared/:token" element={<SharedTrackView />} />
+
         <Route
           path="/dashboard"
           element={
@@ -52,8 +59,10 @@ const AppContent = () => {
           <Route path="agenda" element={<Agenda />} />
           <Route path="checklists" element={<Checklists />} />
           <Route path="tracks" element={<TrackList />} />
+          <Route path="tracks/:id" element={<TrackDashboard />} />
           <Route path="files" element={<MediaLibrary />} />
           <Route path="financial" element={<Financial />} />
+          <Route path="organizer" element={<MusicOrganizer />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

@@ -90,13 +90,18 @@ async function getTrack(userId, trackId) {
 }
 
 async function createTrack(userId, trackData) {
+    console.log('Creating track for user:', userId, 'Data:', trackData);
     const { data, error } = await supabase
         .from('tracks')
         .insert([{ ...trackData, user_id: userId }])
         .select()
         .single();
 
-    if (error) throw error;
+    if (error) {
+        console.error('Error creating track:', error);
+        throw error;
+    }
+    console.log('Track created:', data);
     return data;
 }
 
