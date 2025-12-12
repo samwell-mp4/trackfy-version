@@ -382,6 +382,187 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// --- ARTISTA HUB ROUTES ---
+
+const artistService = require('./services/artistService');
+const agendaService = require('./services/agendaService');
+const taskService = require('./services/taskService');
+
+// Artists
+app.get('/api/artist-hub/artists', authenticateToken, async (req, res) => {
+    try {
+        const artists = await artistService.listArtists(req.user.id);
+        res.json(artists);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/artist-hub/artists', authenticateToken, async (req, res) => {
+    try {
+        const artist = await artistService.createArtist(req.user.id, req.body);
+        res.json(artist);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/artist-hub/artists/:id', authenticateToken, async (req, res) => {
+    try {
+        const artist = await artistService.updateArtist(req.user.id, req.params.id, req.body);
+        res.json(artist);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/artist-hub/artists/:id', authenticateToken, async (req, res) => {
+    try {
+        await artistService.deleteArtist(req.user.id, req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Tracks
+app.get('/api/artist-hub/tracks', authenticateToken, async (req, res) => {
+    try {
+        const tracks = await artistService.listTracks(req.user.id, req.query.artist_id);
+        res.json(tracks);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/artist-hub/tracks/:id', authenticateToken, async (req, res) => {
+    try {
+        const track = await artistService.getTrack(req.user.id, req.params.id);
+        res.json(track);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/artist-hub/tracks', authenticateToken, async (req, res) => {
+    try {
+        const track = await artistService.createTrack(req.user.id, req.body);
+        res.json(track);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/artist-hub/tracks/:id', authenticateToken, async (req, res) => {
+    try {
+        const track = await artistService.updateTrack(req.user.id, req.params.id, req.body);
+        res.json(track);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/artist-hub/tracks/:id', authenticateToken, async (req, res) => {
+    try {
+        await artistService.deleteTrack(req.user.id, req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Events
+app.get('/api/artist-hub/events', authenticateToken, async (req, res) => {
+    try {
+        const events = await agendaService.listEvents(req.user.id, req.query.start, req.query.end);
+        res.json(events);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/artist-hub/events', authenticateToken, async (req, res) => {
+    try {
+        const event = await agendaService.createEvent(req.user.id, req.body);
+        res.json(event);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/artist-hub/events/:id', authenticateToken, async (req, res) => {
+    try {
+        const event = await agendaService.updateEvent(req.user.id, req.params.id, req.body);
+        res.json(event);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/artist-hub/events/:id', authenticateToken, async (req, res) => {
+    try {
+        await agendaService.deleteEvent(req.user.id, req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Checklists & Tasks
+app.get('/api/artist-hub/checklists', authenticateToken, async (req, res) => {
+    try {
+        const checklists = await taskService.listChecklists(req.user.id, req.query.related_entity_type, req.query.related_entity_id);
+        res.json(checklists);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/artist-hub/checklists', authenticateToken, async (req, res) => {
+    try {
+        const checklist = await taskService.createChecklist(req.user.id, req.body);
+        res.json(checklist);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/artist-hub/checklists/:id', authenticateToken, async (req, res) => {
+    try {
+        await taskService.deleteChecklist(req.user.id, req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/artist-hub/tasks', authenticateToken, async (req, res) => {
+    try {
+        const task = await taskService.createTask(req.user.id, req.body);
+        res.json(task);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/artist-hub/tasks/:id', authenticateToken, async (req, res) => {
+    try {
+        const task = await taskService.updateTask(req.user.id, req.params.id, req.body);
+        res.json(task);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/artist-hub/tasks/:id', authenticateToken, async (req, res) => {
+    try {
+        await taskService.deleteTask(req.user.id, req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Servir arquivos estáticos do frontend (build do Vite)
 const frontendPath = path.join(__dirname, '../frontend/dist');
 
@@ -404,6 +585,9 @@ if (fs.existsSync(frontendPath)) {
     console.log('   Para servir o frontend, rode "npm run build" na pasta frontend.');
 }
 
+
+
 app.listen(port, () => {
     console.log(`🚀 Servidor rodando na porta ${port}`);
 });
+// Trigger restart

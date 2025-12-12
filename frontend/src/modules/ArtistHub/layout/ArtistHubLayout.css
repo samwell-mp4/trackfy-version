@@ -1,0 +1,117 @@
+.artist-hub-layout {
+    display: flex;
+    height: 100vh;
+    background: transparent;
+    /* Let body background show through */
+    color: var(--text-primary);
+    overflow: hidden;
+    /* Prevent body scroll */
+}
+
+.hub-sidebar {
+    width: 260px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border-right: 1px solid var(--border-glass);
+    margin: 16px;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.hub-logo {
+    cursor: pointer;
+    margin-bottom: 32px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hub-logo:hover {
+    color: var(--text-primary);
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.hub-nav a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    padding: 12px 16px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.hub-nav a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    transform: translateX(4px);
+}
+
+.hub-nav a.active {
+    background: rgba(139, 92, 246, 0.15);
+    color: #fff;
+    font-weight: 600;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+}
+
+.hub-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-glass);
+}
+
+.logout-btn-small {
+    background: transparent;
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.logout-btn-small:hover {
+    background: rgba(255, 50, 50, 0.1);
+    border-color: rgba(255, 50, 50, 0.3);
+    color: #ff6b6b;
+}
+
+.hub-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+    background: transparent;
+}
+
+/* Scrollbar for content */
+.hub-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.hub-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.hub-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.hub-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}

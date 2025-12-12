@@ -5,8 +5,18 @@ import { ProtectedRoute } from '@components/auth/ProtectedRoute';
 import { Login } from '@pages/Login';
 import { Dashboard } from '@pages/Dashboard';
 import { StatusPopup } from '@components/common/StatusPopup';
+import { ErrorBoundary } from '@components/common/ErrorBoundary';
 import { useVideo } from '@contexts/VideoContext';
 import '@styles/global.css';
+
+import { ArtistHubLayout } from './modules/ArtistHub/layout/ArtistHubLayout';
+import { HubDashboard } from './modules/ArtistHub/pages/HubDashboard';
+import { Agenda } from './modules/ArtistHub/pages/Agenda';
+import { Checklists } from './modules/ArtistHub/pages/Checklists';
+import { TrackList } from './modules/ArtistHub/pages/TrackList';
+import { MediaLibrary } from './modules/ArtistHub/pages/MediaLibrary';
+import { Artists } from './modules/ArtistHub/pages/Artists';
+import { Financial } from './modules/ArtistHub/pages/Financial';
 
 const AppContent = () => {
   const { isGenerating, generationStatus, notification } = useVideo();
@@ -27,6 +37,25 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* Artista Hub Routes */}
+        <Route
+          path="/artist-hub"
+          element={
+            <ProtectedRoute>
+              <ArtistHubLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<HubDashboard />} />
+          <Route path="artists" element={<Artists />} />
+          <Route path="agenda" element={<Agenda />} />
+          <Route path="checklists" element={<Checklists />} />
+          <Route path="tracks" element={<TrackList />} />
+          <Route path="files" element={<MediaLibrary />} />
+          <Route path="financial" element={<Financial />} />
+        </Route>
+
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </>
@@ -34,15 +63,16 @@ const AppContent = () => {
 };
 
 function App() {
+  console.log('App.tsx: Rendering App component');
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <VideoProvider>
+      <ErrorBoundary>
+        <AuthProvider>
           <VideoProvider>
             <AppContent />
           </VideoProvider>
-        </VideoProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

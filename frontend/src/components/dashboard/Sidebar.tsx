@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@components/common/Button';
 
 interface SidebarProps {
@@ -7,6 +8,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
+    const navigate = useNavigate();
+
     return (
         <div className="dashboard-sidebar">
             <div className="sidebar-nav">
@@ -36,6 +39,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
                     {...({ 'data-variant': activeView === 'highlights' ? 'primary' : 'outline' } as any)}
                 >
                     Destaques YouTube
+                </Button>
+
+                <div style={{ margin: '20px 0', borderTop: '1px solid #333' }}></div>
+
+                <Button
+                    variant="outline"
+                    fullWidth
+                    onClick={() => navigate('/artist-hub')}
+                    className="sidebar-btn"
+                    style={{ borderColor: '#00d4ff', color: '#00d4ff' }}
+                >
+                    🎸 Artista Hub
                 </Button>
             </div>
         </div>

@@ -15,18 +15,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        console.log('AuthContext: Checking localStorage');
         // Check for saved user and token in localStorage on load
         const savedUser = localStorage.getItem('videosia_user');
         const savedToken = localStorage.getItem('videosia_token');
 
         if (savedUser && savedToken) {
             try {
+                console.log('AuthContext: Found user and token');
                 setUser(JSON.parse(savedUser));
             } catch (e) {
                 console.error('Failed to parse saved user', e);
                 localStorage.removeItem('videosia_user');
                 localStorage.removeItem('videosia_token');
             }
+        } else {
+            console.log('AuthContext: No user/token found');
         }
         setIsLoading(false);
     }, []);
