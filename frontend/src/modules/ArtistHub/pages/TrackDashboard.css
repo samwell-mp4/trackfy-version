@@ -458,7 +458,8 @@
     .td-actions {
         width: 100%;
         display: flex;
-        justify-content: stretch;
+        flex-direction: column;
+        gap: 10px;
     }
 
     .td-actions button {
@@ -510,12 +511,14 @@
 
     .metadata-grid {
         grid-template-columns: 1fr;
-        /* Single column */
         gap: 1rem;
     }
 
     .meta-item {
         padding: 1rem;
+        width: 100%;
+        /* Ensure full width */
+        box-sizing: border-box;
     }
 
     /* Files List */
