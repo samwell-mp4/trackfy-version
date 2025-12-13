@@ -18,17 +18,7 @@ export const Dashboard: React.FC = () => {
     return (
         <div className="dashboard">
             {/* Desktop Header */}
-            {!isMobile && (
-                <div className="dashboard-header">
-                    <div className="header-content">
-                        <h1>Olá, {user?.usuario?.split(' ')[0]}! 👋</h1>
-                        <p className="subtitle">O que vamos criar hoje?</p>
-                    </div>
-                    <button onClick={logout} className="logout-btn">
-                        Sair
-                    </button>
-                </div>
-            )}
+            {/* Desktop Header Removed as requested */}
 
             <div className="dashboard-layout">
                 {/* Desktop Sidebar */}
