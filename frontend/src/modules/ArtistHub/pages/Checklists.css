@@ -11,19 +11,27 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .page-header h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     display: flex;
     align-items: center;
     gap: 12px;
+    background: linear-gradient(135deg, #fff, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .header-actions {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
 .checklists-content {
@@ -40,7 +48,7 @@
 /* Templates Grid */
 .templates-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
     overflow-y: auto;
     height: 100%;
@@ -409,4 +417,111 @@
 
 .form-group select:focus {
     border-color: var(--primary-color);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .checklists-page {
+        padding-bottom: 80px;
+        /* Space for bottom nav if exists, or just breathing room */
+        overflow-y: auto;
+        /* Allow main page scroll */
+        height: auto;
+        min-height: 100%;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem;
+        justify-content: center;
+    }
+
+    .header-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        /* 3 buttons side by side or stack if needed */
+        gap: 8px;
+    }
+
+    .header-actions button {
+        font-size: 0.8rem;
+        padding: 8px 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .checklists-content {
+        padding: 16px;
+        border-radius: 16px;
+        overflow: visible;
+        /* Allow content to flow */
+        height: auto;
+    }
+
+    /* Stack the main grid containers */
+    .my-lists-container,
+    .by-song-container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Sidebar becomes a top section */
+    .lists-sidebar {
+        height: auto;
+        max-height: 300px;
+        /* Increased slightly */
+        overflow-y: auto;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-glass);
+        /* Ensure touch scroll works */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .list-detail {
+        height: auto;
+        min-height: 0;
+        /* Remove min-height constraint */
+        overflow: visible;
+        padding-bottom: 40px;
+    }
+
+    .templates-grid {
+        grid-template-columns: 1fr;
+        /* Single column for templates */
+        padding-right: 0;
+    }
+
+    .template-card {
+        padding: 20px;
+    }
+
+    .detail-header h2 {
+        font-size: 1.4rem;
+    }
+
+    /* Adjust progress bar stats for small screens */
+    .progress-stats {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .progress-stats .dot {
+        display: none;
+        /* Hide dots on wrap */
+    }
+
+    .progress-stats span {
+        width: 100%;
+        /* Stack stats */
+        text-align: center;
+    }
 }

@@ -132,3 +132,42 @@
     border: 1px solid var(--border-glass);
     color: var(--text-secondary);
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .artists-page {
+        padding: 16px;
+        padding-bottom: 80px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: stretch !important;
+        /* Override inline style */
+        gap: 16px;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .artists-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .artist-card {
+        padding: 20px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .social-links a {
+        flex: 1;
+        justify-content: center;
+    }
+}

@@ -139,3 +139,63 @@
     color: #00d4ff;
     min-width: 100px;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .agenda-page {
+        padding-bottom: 80px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .header-left {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .header-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .header-actions button:last-child {
+        grid-column: 1 / -1;
+        /* New Event button full width */
+    }
+
+    .calendar-day {
+        min-height: 80px;
+        /* Smaller height on mobile */
+        padding: 4px;
+    }
+
+    .day-number {
+        font-size: 0.8rem;
+    }
+
+    .event-pill {
+        font-size: 0.65rem;
+        padding: 1px 4px;
+    }
+
+    .weekdays-header {
+        font-size: 0.8rem;
+    }
+
+    .event-item {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .event-date {
+        min-width: auto;
+        font-size: 0.9rem;
+    }
+}

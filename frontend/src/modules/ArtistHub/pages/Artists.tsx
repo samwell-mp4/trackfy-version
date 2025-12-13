@@ -42,7 +42,7 @@ export const Artists: React.FC = () => {
 
     return (
         <div className="artists-page">
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div className="page-header">
                 <h1>🎤 Gerenciar Artistas</h1>
                 <Button onClick={() => setIsModalOpen(true)}>
                     + Novo Artista
