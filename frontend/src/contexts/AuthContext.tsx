@@ -15,24 +15,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        console.log('AuthContext: Checking localStorage');
-        // Check for saved user and token in localStorage on load
-        const savedUser = localStorage.getItem('videosia_user');
-        const savedToken = localStorage.getItem('videosia_token');
+        const checkAuth = async () => {
+            console.log('AuthContext: Checking localStorage');
+            const savedUser = localStorage.getItem('videosia_user');
+            const savedToken = localStorage.getItem('videosia_token');
 
-        if (savedUser && savedToken) {
-            try {
-                console.log('AuthContext: Found user and token');
-                setUser(JSON.parse(savedUser));
-            } catch (e) {
-                console.error('Failed to parse saved user', e);
-                localStorage.removeItem('videosia_user');
-                localStorage.removeItem('videosia_token');
+            if (savedUser && savedToken) {
+                try {
+                    // Validate token with backend
+                    const response = await fetch(`${BACKEND_URL}/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${savedToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        console.log('AuthContext: Token valid');
+                        setUser(JSON.parse(savedUser));
+                    } else {
+                        console.warn('AuthContext: Token invalid or expired');
+                        localStorage.removeItem('videosia_user');
+                        localStorage.removeItem('videosia_token');
+                    }
+                } catch (e) {
+                    console.error('Auth check failed', e);
+                    // On network error, maybe keep user logged in or not? 
+                    // Safer to keep logged in if it's just network, but if 403 it will be caught above.
+                    // If fetch fails (network), we might want to assume offline and keep user.
+                    // But for now, let's trust the stored user if network fails, 
+                    // but if response is 401/403 (handled above), we logout.
+                    setUser(JSON.parse(savedUser));
+                }
+            } else {
+                console.log('AuthContext: No user/token found');
             }
-        } else {
-            console.log('AuthContext: No user/token found');
-        }
-        setIsLoading(false);
+            setIsLoading(false);
+        };
+
+        checkAuth();
     }, []);
 
     const login = async (email: string, password: string) => {

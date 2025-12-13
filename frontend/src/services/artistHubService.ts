@@ -32,6 +32,8 @@ export const artistHubService = {
     // Artists
     getArtists: () => request('/artists'),
     createArtist: (data: any) => request('/artists', { method: 'POST', body: JSON.stringify(data) }),
+    updateArtist: (id: string, data: any) => request(`/artists/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    createArtistUser: (artistId: string, data: any) => request(`/artists/${artistId}/user`, { method: 'POST', body: JSON.stringify(data) }),
 
     // Files
     uploadFile: async (file: File) => {
@@ -87,13 +89,16 @@ export const artistHubService = {
     },
 
     // Events
-    getEvents: (start?: string, end?: string) => {
+    getEvents: (start?: string, end?: string, track_id?: string) => {
         const params = new URLSearchParams();
         if (start) params.append('start', start);
         if (end) params.append('end', end);
+        if (track_id) params.append('track_id', track_id);
         return request(`/events?${params.toString()}`);
     },
     createEvent: (data: any) => request('/events', { method: 'POST', body: JSON.stringify(data) }),
+    updateEvent: (id: string, data: any) => request(`/events/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteEvent: (id: string) => request(`/events/${id}`, { method: 'DELETE' }),
 
     // Checklists & Tasks
     getChecklists: (type?: string, id?: string) => {

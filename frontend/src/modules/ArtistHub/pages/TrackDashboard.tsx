@@ -122,6 +122,41 @@ export const TrackDashboard: React.FC = () => {
                 status: track.status,
                 metadata: track.metadata
             });
+
+            // Sync with Agenda if release date changed
+            if (track.release_date && track.release_date !== originalTrack?.release_date) {
+                try {
+                    const events = await artistHubService.getEvents(undefined, undefined, id);
+                    const releaseEvent = events.find((e: any) => e.type === 'release');
+
+                    if (releaseEvent) {
+                        // Update existing event
+                        await artistHubService.updateEvent(releaseEvent.id, {
+                            start_time: new Date(track.release_date).toISOString(),
+                            end_time: new Date(new Date(track.release_date).setHours(new Date(track.release_date).getHours() + 1)).toISOString(),
+                            title: `Lançamento: ${track.title}`
+                        });
+                    } else {
+                        // Create new event
+                        await artistHubService.createEvent({
+                            title: `Lançamento: ${track.title}`,
+                            type: 'release',
+                            start_time: new Date(track.release_date).toISOString(),
+                            end_time: new Date(new Date(track.release_date).setHours(new Date(track.release_date).getHours() + 1)).toISOString(),
+                            status: 'planned',
+                            priority: 'high',
+                            track_id: id,
+                            metadata: {
+                                releaseType: track.metadata.release_type || 'single'
+                            }
+                        });
+                    }
+                } catch (syncError) {
+                    console.error('Error syncing with agenda:', syncError);
+                    // Don't block success message if sync fails, but maybe warn?
+                }
+            }
+
             setOriginalTrack(JSON.parse(JSON.stringify(track)));
             setIsDirty(false);
             alert('Alterações salvas com sucesso! 💾');

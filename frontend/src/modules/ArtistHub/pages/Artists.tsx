@@ -8,6 +8,7 @@ interface Artist {
     id: string;
     name: string;
     bio?: string;
+    image_url?: string;
     full_name?: string;
     social_links?: {
         spotify?: string;
@@ -58,45 +59,45 @@ export const Artists: React.FC = () => {
             {loading ? (
                 <p>Carregando...</p>
             ) : (
-                <div className="artists-grid">
+                <div className="artists-list-container">
                     {artists.length === 0 && (
                         <div className="empty-state">
                             <p>Nenhum artista cadastrado.</p>
                         </div>
                     )}
 
-                    {artists.map(artist => (
-                        <div key={artist.id} className="artist-card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px' }}>
-                                <h3>{artist.name}</h3>
-                                <span className="artist-avatar">
-                                    👤
-                                </span>
+                    <div className="artists-list">
+                        {artists.map(artist => (
+                            <div
+                                key={artist.id}
+                                className="artist-list-item"
+                                onClick={() => window.location.href = `/artist-hub/artists/${artist.id}/dashboard`}
+                            >
+                                <div className="artist-info-main">
+                                    <div className="artist-avatar-small">
+                                        {artist.image_url ? <img src={artist.image_url} alt={artist.name} /> : '👤'}
+                                    </div>
+                                    <div>
+                                        <h3>{artist.name}</h3>
+                                        <span className="artist-role-badge">Artista</span>
+                                    </div>
+                                </div>
+
+                                <div className="artist-stats-preview">
+                                    <div className="stat-pill">
+                                        <span>🎵 0 Releases</span>
+                                    </div>
+                                    <div className="stat-pill">
+                                        <span>📅 0 Eventos</span>
+                                    </div>
+                                </div>
+
+                                <div className="artist-actions-arrow">
+                                    ➝
+                                </div>
                             </div>
-
-                            {artist.full_name && (
-                                <p className="artist-full-name">
-                                    <strong>Nome Civil:</strong> {artist.full_name}
-                                </p>
-                            )}
-
-                            <p className="artist-bio">
-                                {artist.bio || 'Sem biografia.'}
-                            </p>
-
-                            <div className="social-links">
-                                {artist.social_links?.spotify && (
-                                    <a href={artist.social_links.spotify} target="_blank" rel="noopener noreferrer">🟢 Spotify</a>
-                                )}
-                                {artist.social_links?.instagram && (
-                                    <a href={artist.social_links.instagram} target="_blank" rel="noopener noreferrer">📸 Insta</a>
-                                )}
-                                {artist.social_links?.youtube && (
-                                    <a href={artist.social_links.youtube} target="_blank" rel="noopener noreferrer">▶️ YT</a>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             )}
 

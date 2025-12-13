@@ -20,6 +20,7 @@ import { Financial } from './modules/ArtistHub/pages/Financial';
 import { MusicOrganizer } from './modules/ArtistHub/pages/MusicOrganizer/MusicOrganizer';
 import { TrackDashboard } from './modules/ArtistHub/pages/TrackDashboard';
 import { SharedTrackView } from './modules/ArtistHub/pages/SharedTrackView';
+import { ArtistDashboard } from './modules/ArtistHub/pages/ArtistDashboard';
 
 const AppContent = () => {
   const { isGenerating, generationStatus, notification } = useVideo();
@@ -56,6 +57,7 @@ const AppContent = () => {
         >
           <Route index element={<HubDashboard />} />
           <Route path="artists" element={<Artists />} />
+          <Route path="artists/:id/dashboard" element={<ArtistDashboard />} />
           <Route path="agenda" element={<Agenda />} />
           <Route path="checklists" element={<Checklists />} />
           <Route path="tracks" element={<TrackList />} />

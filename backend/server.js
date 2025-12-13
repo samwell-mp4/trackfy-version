@@ -43,7 +43,9 @@ app.post('/login', async (req, res) => {
             {
                 id: user.id,
                 email: user.email,
-                usuario: user.usuario
+                usuario: user.usuario,
+                role: user.role || 'producer',
+                artist_id: user.artist_id
             },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
@@ -55,7 +57,9 @@ app.post('/login', async (req, res) => {
             user: {
                 id: user.id,
                 email: user.email,
-                usuario: user.usuario
+                usuario: user.usuario,
+                role: user.role || 'producer',
+                artist_id: user.artist_id
             }
         });
 
@@ -495,6 +499,49 @@ app.get('/api/artist-hub/artists', authenticateToken, async (req, res) => {
     }
 });
 
+// Criar usuário para um artista
+app.post('/api/artist-hub/artists/:id/user', authenticateToken, async (req, res) => {
+    const { email, password, name } = req.body;
+    const artistId = req.params.id;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+    }
+
+    try {
+        // 1. Check if email exists
+        const { data: existingUser } = await supabase
+            .from('users')
+            .select('id')
+            .eq('email', email)
+            .single();
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'Email já cadastrado' });
+        }
+
+        // 2. Create User
+        const { data: newUser, error: createError } = await supabase
+            .from('users')
+            .insert([{
+                email,
+                password, // Note: Hash in production!
+                usuario: name,
+                role: 'artist',
+                artist_id: artistId
+            }])
+            .select()
+            .single();
+
+        if (createError) throw createError;
+
+        res.json(newUser);
+    } catch (err) {
+        console.error('Erro ao criar usuário do artista:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.post('/api/artist-hub/artists', authenticateToken, async (req, res) => {
     try {
         const artist = await artistService.createArtist(req.user.id, req.body);
@@ -571,7 +618,7 @@ app.delete('/api/artist-hub/tracks/:id', authenticateToken, async (req, res) => 
 // Events
 app.get('/api/artist-hub/events', authenticateToken, async (req, res) => {
     try {
-        const events = await agendaService.listEvents(req.user.id, req.query.start, req.query.end);
+        const events = await agendaService.listEvents(req.user.id, req.query.start, req.query.end, req.query.track_id);
         res.json(events);
     } catch (err) {
         res.status(500).json({ error: err.message });

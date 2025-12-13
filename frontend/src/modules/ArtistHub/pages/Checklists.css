@@ -24,6 +24,7 @@
     align-items: center;
     gap: 12px;
     background: linear-gradient(135deg, #fff, #a5b4fc);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }

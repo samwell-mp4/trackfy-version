@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS artists (
     name TEXT NOT NULL,
     bio TEXT,
     image_url TEXT,
+    files_structure JSONB DEFAULT '[]'::jsonb,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
