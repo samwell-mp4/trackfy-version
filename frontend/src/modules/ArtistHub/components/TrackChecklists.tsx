@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { artistHubService } from '../../../services/artistHubService';
 import { Button } from '@components/common/Button';
 import { CHECKLIST_TEMPLATES, type ChecklistTemplate } from '../constants/checklistTemplates';
-import '../pages/Checklists.css'; // Reuse styles
+import '../pages/checklists-view.css'; // Reuse styles
 
 interface Task {
     id: string;
