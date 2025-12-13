@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import { useMobile } from '@hooks/useMobile';
 import { Sidebar } from '@components/dashboard/Sidebar';
@@ -8,12 +7,10 @@ import { MobileSidebar } from '@components/dashboard/MobileSidebar';
 import { CreateVideo } from '@components/dashboard/CreateVideo';
 import { Gallery } from '@components/dashboard/Gallery';
 import { YouTubeHighlights } from '@components/dashboard/YouTubeHighlights';
-import { Music, ArrowRight } from 'lucide-react';
 import './Dashboard.css';
 
 export const Dashboard: React.FC = () => {
     const { user, logout } = useAuth();
-    const navigate = useNavigate();
     const [activeView, setActiveView] = useState<'create' | 'gallery' | 'highlights'>('create');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const isMobile = useMobile();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, User, LogOut, Settings, Heart, Clock } from 'lucide-react';
+import { User, LogOut, Settings, Heart, Clock } from 'lucide-react';
 import './MobileSidebar.css';
 
 interface MobileSidebarProps {
