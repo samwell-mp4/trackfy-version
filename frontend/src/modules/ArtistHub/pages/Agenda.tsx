@@ -4,7 +4,7 @@ import { Button } from '@components/common/Button';
 import { EventModal } from '../components/Agenda/EventModal';
 import { AgendaCalendar } from '../components/Agenda/AgendaCalendar';
 import { AgendaSidebar } from '../components/Agenda/AgendaSidebar';
-import './Agenda.css';
+import './agenda-view.css'; // Renamed to force git update
 
 interface Event {
     id: string;

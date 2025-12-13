@@ -4,7 +4,7 @@ import { Button } from '@components/common/Button';
 import { CHECKLIST_TEMPLATES, type ChecklistTemplate } from '../constants/checklistTemplates';
 import { useNavigate } from 'react-router-dom';
 import { TrackMetadataForm } from '../components/TrackMetadataForm';
-import './Checklists.css';
+import './checklists-view.css';
 
 interface Task {
     id: string;

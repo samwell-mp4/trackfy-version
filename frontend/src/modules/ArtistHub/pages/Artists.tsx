@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { artistHubService } from '../../../services/artistHubService';
 import { Button } from '@components/common/Button';
 import { CreateArtistModal } from '../components/CreateArtistModal';
-import './Artists.css'; // We'll reuse or create a simple CSS
+import './artists-view.css'; // Renamed to force git update
 
 interface Artist {
     id: string;

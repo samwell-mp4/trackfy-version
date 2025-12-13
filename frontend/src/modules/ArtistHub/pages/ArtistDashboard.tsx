@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { artistHubService } from '../../../services/artistHubService';
 import { Button } from '@components/common/Button';
-import './ArtistDashboard.css';
+import './artist-dashboard-view.css';
 
 interface ArtistData {
     id: string;
