@@ -339,12 +339,16 @@
     flex-direction: column;
     gap: 4px;
     flex: 1;
+    min-width: 0;
+    /* Allow text truncate */
 }
 
 .task-title {
     color: var(--text-primary);
     font-weight: 500;
     transition: color 0.2s;
+    word-break: break-word;
+    /* Prevent long words breaking layout */
 }
 
 .task-category {
@@ -353,12 +357,7 @@
     background: rgba(59, 130, 246, 0.1);
     padding: 4px 8px;
     border-radius: 6px;
-    height: 100%;
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
-    border: 2px dashed var(--border-glass);
+    align-self: flex-start;
 }
 
 .empty-msg {
@@ -423,106 +422,161 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .checklists-page {
-        padding-bottom: 80px;
-        /* Space for bottom nav if exists, or just breathing room */
-        overflow-y: auto;
-        /* Allow main page scroll */
+        padding-bottom: 100px;
         height: auto;
-        min-height: 100%;
+        min-height: 100vh;
+        overflow-y: auto;
     }
 
     .page-header {
         flex-direction: column;
-        align-items: stretch;
-        gap: 20px;
+        align-items: flex-start;
+        gap: 16px;
         margin-bottom: 24px;
     }
 
     .page-header h1 {
         font-size: 1.5rem;
-        justify-content: center;
+        width: 100%;
     }
 
+    /* Fix Squashed Tabs: Use Horizontal Scroll */
     .header-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        /* 3 buttons side by side or stack if needed */
-        gap: 8px;
+        display: flex;
+        width: 100%;
+        overflow-x: auto;
+        gap: 12px;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .header-actions::-webkit-scrollbar {
+        display: none;
     }
 
     .header-actions button {
-        font-size: 0.8rem;
-        padding: 8px 4px;
+        flex-shrink: 0;
+        /* Prevent squashing */
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        padding: 8px 16px;
+        font-size: 0.9rem;
     }
 
     .checklists-content {
         padding: 16px;
         border-radius: 16px;
-        overflow: visible;
-        /* Allow content to flow */
         height: auto;
+        overflow: visible;
+        background: transparent;
+        /* Remove heavy background on mobile */
+        border: none;
+        box-shadow: none;
     }
 
-    /* Stack the main grid containers */
+    /* Stack Layouts */
     .my-lists-container,
     .by-song-container {
         display: flex;
         flex-direction: column;
+        gap: 20px;
         height: auto;
         overflow: visible;
     }
 
-    /* Sidebar becomes a top section */
+    /* Sidebar (List Selection) */
     .lists-sidebar {
         height: auto;
         max-height: 300px;
-        /* Increased slightly */
         overflow-y: auto;
-        margin-bottom: 20px;
-        border-bottom: 1px solid var(--border-glass);
-        /* Ensure touch scroll works */
-        -webkit-overflow-scrolling: touch;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(10px);
+        margin-bottom: 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    /* List Items */
+    .list-item {
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .list-info {
+        flex: 1;
+        min-width: 0;
+        /* Allow text truncate */
+    }
+
+    .list-info h4 {
+        font-size: 0.95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .delete-btn {
+        padding: 8px;
+        margin-left: 8px;
+        font-size: 1.2rem;
+        color: #ef4444;
+        /* Make delete more visible */
+        opacity: 0.8;
+    }
+
+    /* Detail View */
     .list-detail {
         height: auto;
-        min-height: 0;
-        /* Remove min-height constraint */
         overflow: visible;
-        padding-bottom: 40px;
+        background: transparent;
+        border: none;
+        padding: 0;
     }
 
-    .templates-grid {
-        grid-template-columns: 1fr;
-        /* Single column for templates */
-        padding-right: 0;
-    }
-
-    .template-card {
+    .detail-header {
+        background: rgba(30, 41, 59, 0.5);
         padding: 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 16px;
     }
 
     .detail-header h2 {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
+        line-height: 1.3;
     }
 
-    /* Adjust progress bar stats for small screens */
+    /* Progress Stats */
     .progress-stats {
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 8px;
+        justify-content: space-between;
+    }
+
+    .progress-stats span {
+        font-size: 0.8rem;
     }
 
     .progress-stats .dot {
         display: none;
-        /* Hide dots on wrap */
     }
 
-    .progress-stats span {
-        width: 100%;
-        /* Stack stats */
-        text-align: center;
+    /* Tasks List */
+    .tasks-list {
+        gap: 12px;
+        overflow: visible;
+    }
+
+    .task-item {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Templates Grid */
+    .templates-grid {
+        grid-template-columns: 1fr;
+        padding: 0;
+        overflow: visible;
     }
 }
