@@ -20,7 +20,11 @@ interface ArtistData {
     artist_type?: string;
     responsible_name?: string;
     responsible_company?: string;
+    responsible_phone?: string;
+    responsible_email?: string;
+    responsible_percentage?: number;
     share_email?: string;
+    birth_date?: string;
 }
 
 const CopyButton: React.FC<{ text: string, label?: string }> = ({ text, label }) => {
