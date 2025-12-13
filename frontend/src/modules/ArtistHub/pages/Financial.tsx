@@ -148,7 +148,7 @@ export const Financial: React.FC = () => {
 
             <div className="financial-grid">
                 {/* Summary Cards */}
-                <div className="summary-card" style={{ gridColumn: 'span 4' }}>
+                <div className="summary-card card-balance">
                     <div className="summary-label">
                         <span>Saldo Atual</span>
                     </div>
@@ -160,7 +160,7 @@ export const Financial: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="summary-card" style={{ gridColumn: 'span 4' }}>
+                <div className="summary-card card-income">
                     <div className="summary-label">
                         <span>Receita Mensal</span>
                     </div>
@@ -172,7 +172,7 @@ export const Financial: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="summary-card" style={{ gridColumn: 'span 4' }}>
+                <div className="summary-card card-expense">
                     <div className="summary-label">
                         <span>Despesas Mensais</span>
                     </div>
@@ -202,9 +202,9 @@ export const Financial: React.FC = () => {
                                         <div className="t-title">{t.title}</div>
                                         <div className="t-meta">
                                             <span>{cat.label}</span>
-                                            <span>•</span>
+                                            <span className="separator">•</span>
                                             <span>{getPaymentLabel(t.paymentMethod)}</span>
-                                            <span>•</span>
+                                            <span className="separator">•</span>
                                             <span>{new Date(t.date).toLocaleDateString()}</span>
                                         </div>
                                     </div>
