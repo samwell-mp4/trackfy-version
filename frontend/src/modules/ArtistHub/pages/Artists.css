@@ -1,6 +1,9 @@
 .artists-page {
     padding: 2rem;
     color: white;
+    max-width: 1200px;
+    /* Limit width on desktop */
+    margin: 0 auto;
 }
 
 .page-header {
@@ -55,6 +58,7 @@
     justify-content: center;
     font-size: 1.5rem;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .artist-avatar-small img {
@@ -108,4 +112,55 @@
     background: rgba(255, 255, 255, 0.02);
     border-radius: 16px;
     border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .artists-page {
+        padding: 1rem;
+        padding-bottom: 100px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .page-header button {
+        width: 100%;
+    }
+
+    .artist-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+
+    .artist-info-main {
+        width: 100%;
+    }
+
+    .artist-stats-preview {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-left: 64px;
+        /* Align with text (48px avatar + 16px gap) */
+    }
+
+    .stat-pill {
+        width: fit-content;
+    }
+
+    .artist-actions-arrow {
+        display: none;
+        /* Hide arrow on mobile */
+    }
 }
