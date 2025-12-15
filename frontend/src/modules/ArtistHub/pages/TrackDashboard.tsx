@@ -4,9 +4,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { artistHubService } from '../../../services/artistHubService';
 import { Button } from '@components/common/Button';
 import { TrackChecklists } from '../components/TrackChecklists';
+<<<<<<< HEAD
 import { ParticipantSelector } from '../components/ParticipantSelector';
 import { RoyaltiesTab } from '../components/RoyaltiesTab';
 import { ContractsTab } from '../components/ContractsTab';
+=======
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 import './TrackDashboard.css';
 
 interface TrackData {
@@ -66,7 +69,11 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
 export const TrackDashboard: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+<<<<<<< HEAD
     const [activeTab, setActiveTab] = useState<'overview' | 'lyrics' | 'files' | 'team' | 'docs' | 'checklists' | 'financial' | 'contracts'>('overview');
+=======
+    const [activeTab, setActiveTab] = useState<'overview' | 'lyrics' | 'files' | 'team' | 'docs' | 'checklists'>('overview');
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 
     const [track, setTrack] = useState<TrackData | null>(null);
     const [originalTrack, setOriginalTrack] = useState<TrackData | null>(null); // For dirty checking
@@ -76,12 +83,19 @@ export const TrackDashboard: React.FC = () => {
     const [uploading, setUploading] = useState(false);
     const [saving, setSaving] = useState(false);
 
+<<<<<<< HEAD
     const [showShareModal, setShowShareModal] = useState(false);
     const [sharePassword, setSharePassword] = useState('');
 
     // Participant Selector State
     const [showParticipantSelector, setShowParticipantSelector] = useState(false);
 
+=======
+    // Share Modal State
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [sharePassword, setSharePassword] = useState('');
+
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
     // Refs for file inputs
     const coverInputRef = useRef<HTMLInputElement>(null);
     const wavInputRef = useRef<HTMLInputElement>(null);
@@ -537,7 +551,11 @@ export const TrackDashboard: React.FC = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <h3>Participantes & Royalties</h3>
+<<<<<<< HEAD
                 <Button size="sm" onClick={() => setShowParticipantSelector(true)}>➕ Adicionar Participante</Button>
+=======
+                <Button size="sm">➕ Adicionar Participante</Button>
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
             </div>
             <table className="team-table">
                 <thead>
@@ -634,6 +652,7 @@ export const TrackDashboard: React.FC = () => {
                 <div className="td-title-section">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
                         <Button variant="ghost" onClick={() => navigate('/artist-hub/tracks')}>← Voltar</Button>
+<<<<<<< HEAD
                         <select
                             className={`td-status-selector status-${track.status}`}
                             value={track.status}
@@ -650,6 +669,11 @@ export const TrackDashboard: React.FC = () => {
                             <option value="release_ready">🚀 Pronto (Ready)</option>
                             <option value="released">✅ Lançado</option>
                         </select>
+=======
+                        <span className={`td-status-badge status-${track.status}`}>
+                            {track.status.replace('_', ' ')}
+                        </span>
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
                     </div>
                     <h1>{track.title}</h1>
                     <div className="td-subtitle">
@@ -695,6 +719,7 @@ export const TrackDashboard: React.FC = () => {
                     Documentos
                 </button>
                 <button
+<<<<<<< HEAD
                     className={`td-tab ${activeTab === 'financial' ? 'active' : ''}`}
                     onClick={() => setActiveTab('financial')}
                 >
@@ -707,6 +732,8 @@ export const TrackDashboard: React.FC = () => {
                     📜 Contratos
                 </button>
                 <button
+=======
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
                     className={`td-tab ${activeTab === 'checklists' ? 'active' : ''}`}
                     onClick={() => setActiveTab('checklists')}
                 >
@@ -720,8 +747,11 @@ export const TrackDashboard: React.FC = () => {
                 {activeTab === 'files' && renderFiles()}
                 {activeTab === 'team' && renderTeam()}
                 {activeTab === 'docs' && renderDocs()}
+<<<<<<< HEAD
                 {activeTab === 'financial' && <RoyaltiesTab track={track} onUpdate={handleSave} />}
                 {activeTab === 'contracts' && <ContractsTab track={track} />}
+=======
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
                 {activeTab === 'checklists' && track && <TrackChecklists trackId={track.id} trackTitle={track.title} />}
             </div>
 
@@ -790,6 +820,7 @@ export const TrackDashboard: React.FC = () => {
                     </div>
                 </div>
             )}
+<<<<<<< HEAD
             {/* Participant Selector */}
             {showParticipantSelector && (
                 <ParticipantSelector
@@ -809,6 +840,8 @@ export const TrackDashboard: React.FC = () => {
                     }}
                 />
             )}
+=======
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
         </div>
     );
 };

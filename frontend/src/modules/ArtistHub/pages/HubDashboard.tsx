@@ -37,7 +37,10 @@ export const HubDashboard: React.FC = () => {
         topExpenses: [] as Transaction[],
         topInvestment: { category: '', amount: 0 }
     });
+<<<<<<< HEAD
     const [pendingContracts, setPendingContracts] = useState<any[]>([]);
+=======
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
     // const [loading, setLoading] = useState(true); // Unused
 
     const navigate = useNavigate();
@@ -131,6 +134,7 @@ export const HubDashboard: React.FC = () => {
                 .slice(0, 3);
             setUpcomingEvents(futureEvents);
 
+<<<<<<< HEAD
             // Extract Pending Contracts from Tracks
             const contracts: any[] = [];
             tracks.forEach((track: any) => {
@@ -149,6 +153,8 @@ export const HubDashboard: React.FC = () => {
             });
             setPendingContracts(contracts);
 
+=======
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
         } catch (error) {
             console.error('Error loading dashboard data:', error);
         } finally {
@@ -224,6 +230,7 @@ export const HubDashboard: React.FC = () => {
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 {/* Contracts & Authorizations Widget */}
                 <div className="glass-card" style={{ gridColumn: 'span 4' }}>
                     <div className="card-header">
@@ -259,6 +266,8 @@ export const HubDashboard: React.FC = () => {
                     </div>
                 </div>
 
+=======
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
                 {/* Middle Row - Widgets */}
                 <div className="glass-card" style={{ gridColumn: 'span 4' }}>
                     <div className="card-header">

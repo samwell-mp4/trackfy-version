@@ -8,8 +8,12 @@ import { StatusPopup } from '@components/common/StatusPopup';
 import { ErrorBoundary } from '@components/common/ErrorBoundary';
 import { useVideo } from '@contexts/VideoContext';
 import '@styles/global.css';
+<<<<<<< HEAD
 import { PublicTrackRegistration } from './modules/ArtistHub/pages/PublicTrackRegistration';
 import './App.css';
+=======
+
+>>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 import { ArtistHubLayout } from './modules/ArtistHub/layout/ArtistHubLayout';
 import { HubDashboard } from './modules/ArtistHub/pages/HubDashboard';
 import { Agenda } from './modules/ArtistHub/pages/Agenda';
