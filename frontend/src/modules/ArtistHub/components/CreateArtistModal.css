@@ -1,0 +1,233 @@
+/* Artist Wizard Modal Styles */
+
+.artist-wizard-modal {
+    max-width: 900px;
+    width: 95%;
+    background: #0f172a;
+    /* Darker background */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    padding: 0;
+    /* Reset padding for custom layout */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.wizard-header {
+    background: rgba(30, 41, 59, 0.5);
+    padding: 2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.wizard-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+.step-indicator {
+    background: rgba(139, 92, 246, 0.1);
+    color: #a78bfa;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.wizard-body {
+    padding: 2.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.wizard-step h3 {
+    font-size: 1.4rem;
+    color: white;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Type Selection Cards */
+.type-selection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.type-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 2px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.type-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateY(-8px);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.type-card.selected {
+    border-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.05);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+}
+
+.type-card .icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+.type-card:hover .icon {
+    transform: scale(1.1);
+}
+
+.type-card h4 {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: white;
+    font-weight: 700;
+}
+
+.type-card p {
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Form Styles */
+.form-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.step-desc {
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid #8b5cf6;
+}
+
+.wizard-actions {
+    background: rgba(30, 41, 59, 0.5);
+    padding: 2rem 2.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.wizard-actions button {
+    min-width: 120px;
+}
+
+/* User Creation Section */
+.user-creation-section {
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    transition: all 0.3s;
+}
+
+.user-creation-section:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+.info-text {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-text::before {
+    content: 'ℹ️';
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .artist-wizard-modal {
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .type-selection {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .wizard-body {
+        padding: 1.5rem;
+    }
+}
