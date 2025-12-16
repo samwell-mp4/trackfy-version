@@ -155,7 +155,7 @@ export const PublicTrackRegistration: React.FC = () => {
                             <p className="helper-text">Liste quem participou (Beatmaker, Feats, Compositores).</p>
 
                             <div className="participants-list">
-                                {formData.participants.map((p, index) => (
+                                {formData.participants.map((p) => (
                                     <div key={p.id} className="participant-row">
                                         <div className="form-group grow">
                                             <input

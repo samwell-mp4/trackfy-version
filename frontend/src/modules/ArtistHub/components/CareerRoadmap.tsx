@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@components/common/Button';
 import './CareerRoadmap.css';
 
 interface ChecklistItem {
@@ -120,9 +119,6 @@ export const CareerRoadmap: React.FC = () => {
     const activePhase = phases.find(p => p.id === activePhaseId) || phases[0];
 
     // Calculate overall progress
-    const totalItems = phases.reduce((acc, p) => acc + p.items.length, 0);
-    const completedItems = phases.reduce((acc, p) => acc + p.items.filter(i => i.completed).length, 0);
-    const overallProgress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
     return (
         <div className="career-roadmap">

@@ -62,7 +62,6 @@
     margin-top: 2rem;
 }
 
-<<<<<<< HEAD
 /* Metrics Row - Compact & Agile */
 .tl-metrics-row {
     display: flex;
@@ -414,10 +413,10 @@
     height: 100%;
     background: linear-gradient(90deg, #8b5cf6, #ec4899);
     transition: width 0.5s ease-out;
-=======
-.empty-state p:first-child {
-    font-size: 1.2rem;
-    color: #e2e8f0;
-    margin-bottom: 0.5rem;
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
-}
+
+    =======.empty-state p:first-child {
+        font-size: 1.2rem;
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+        >>>>>>>2515de915935a0055c33748ef425b911b5c2085d
+    }

@@ -56,7 +56,6 @@ const DEFAULT_STRUCTURE: FileNode[] = [
         ]
     },
     {
-<<<<<<< HEAD
         id: 'social', name: 'Redes Sociais', type: 'folder', isLocked: true, children: [
             {
                 id: 'instagram', name: 'Instagram', type: 'folder', children: [
@@ -79,15 +78,6 @@ const DEFAULT_STRUCTURE: FileNode[] = [
                 ]
             },
             { id: 'ads', name: 'Anúncios / Tráfego', type: 'folder', children: [] },
-=======
-        id: 'social', name: 'Conteúdo para Redes', type: 'folder', isLocked: true, children: [
-            { id: 'reels', name: 'Reels', type: 'folder', children: [] },
-            { id: 'tiktok', name: 'TikTok', type: 'folder', children: [] },
-            { id: 'shorts', name: 'Shorts', type: 'folder', children: [] },
-            { id: 'stories', name: 'Stories', type: 'folder', children: [] },
-            { id: 'feed', name: 'Feed', type: 'folder', children: [] },
-            { id: 'ads', name: 'Anúncios', type: 'folder', children: [] },
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
         ]
     },
     {
@@ -172,14 +162,10 @@ export const MediaLibrary: React.FC = () => {
                         children = JSON.parse(artist.files_structure);
                     } else if (Array.isArray(artist.files_structure)) {
                         children = artist.files_structure;
-<<<<<<< HEAD
                     }
 
                     // Fallback if parsed children is empty (fix for empty library issue)
                     if (!children || children.length === 0) {
-=======
-                    } else {
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
                         children = JSON.parse(JSON.stringify(DEFAULT_STRUCTURE));
                     }
                 } catch (e) {

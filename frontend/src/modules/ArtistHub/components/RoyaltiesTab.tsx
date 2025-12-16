@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@components/common/Button';
 
 interface RoyaltiesTabProps {
@@ -6,7 +6,7 @@ interface RoyaltiesTabProps {
     onUpdate: () => void;
 }
 
-export const RoyaltiesTab: React.FC<RoyaltiesTabProps> = ({ track, onUpdate }) => {
+export const RoyaltiesTab: React.FC<RoyaltiesTabProps> = ({ track }) => {
     const participants = track.metadata.rights || [];
 
     const handleWhatsAppReminder = (participant: any) => {

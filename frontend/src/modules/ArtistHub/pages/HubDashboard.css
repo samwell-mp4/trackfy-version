@@ -1,9 +1,6 @@
 .dashboard-container {
     padding-bottom: 60px;
-<<<<<<< HEAD
     padding: 2rem;
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
     animation: fadeIn 0.5s ease-out;
     max-width: 100%;
     overflow-x: hidden;

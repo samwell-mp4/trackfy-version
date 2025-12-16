@@ -1,18 +1,9 @@
-<<<<<<< HEAD
 .artist-dashboard {
     padding: 2rem;
     color: #e2e8f0;
     width: 100%;
     max-width: none;
     margin: 0;
-=======
-/* Global Dashboard Container */
-.artist-dashboard {
-    padding: 2rem;
-    color: #e2e8f0;
-    max-width: 1400px;
-    margin: 0 auto;
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
     font-family: 'Inter', sans-serif;
 }
 
@@ -350,7 +341,7 @@
     gap: 1rem;
 }
 
-<<<<<<< HEAD
+
 /* Modal Styles */
 .modal-overlay {
     position: fixed;
@@ -464,8 +455,6 @@ h4 {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 .ad-list-item {
     display: flex;
     align-items: center;

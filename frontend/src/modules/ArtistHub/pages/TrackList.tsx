@@ -14,15 +14,11 @@ interface Track {
 
 export const TrackList: React.FC = () => {
     const [tracks, setTracks] = useState<Track[]>([]);
-<<<<<<< HEAD
     const [artists, setArtists] = useState<any[]>([]);
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-<<<<<<< HEAD
     // Filters State
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedArtist, setSelectedArtist] = useState('');
@@ -42,17 +38,6 @@ export const TrackList: React.FC = () => {
             ]);
             setTracks(tracksData);
             setArtists(artistsData);
-=======
-    useEffect(() => {
-        loadTracks();
-    }, []);
-
-    const loadTracks = async () => {
-        try {
-            setLoading(true);
-            const data = await artistHubService.getTracks();
-            setTracks(data);
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -60,7 +45,6 @@ export const TrackList: React.FC = () => {
         }
     };
 
-<<<<<<< HEAD
     // Metrics Calculation
     const metrics = {
         total: tracks.length,
@@ -132,8 +116,6 @@ export const TrackList: React.FC = () => {
         }
     };
 
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
     return (
         <div className="track-list-page">
             <div className="page-header">
@@ -143,7 +125,6 @@ export const TrackList: React.FC = () => {
                 </Button>
             </div>
 
-<<<<<<< HEAD
             {/* Metrics Row */}
             <div className="tl-metrics-row">
                 <div className="tl-metric-card">
@@ -214,20 +195,10 @@ export const TrackList: React.FC = () => {
             {!loading && !error && filteredTracks.length === 0 && (
                 <div className="empty-state">
                     <p>Nenhuma música encontrada com estes filtros.</p>
-=======
-            {loading && <p>Carregando...</p>}
-            {error && <p style={{ color: 'red' }}>Erro: {error}</p>}
-
-            {!loading && !error && tracks.length === 0 && (
-                <div className="empty-state">
-                    <p>Nenhuma música encontrada.</p>
-                    <p style={{ color: '#888', fontSize: '0.9rem' }}>Crie seu primeiro projeto para começar.</p>
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
                 </div>
             )}
 
             <div className="tracks-grid">
-<<<<<<< HEAD
                 {filteredTracks.map(track => {
                     const progress = getProgress(track.status);
                     return (
@@ -272,21 +243,6 @@ export const TrackList: React.FC = () => {
                         </div>
                     );
                 })}
-=======
-                {tracks.map(track => (
-                    <div key={track.id} className="track-card">
-                        <div className="track-info">
-                            <h3>{track.title}</h3>
-                            <span className="track-meta">
-                                {track.artists?.name || 'Artista Desconhecido'} • {track.status}
-                            </span>
-                        </div>
-                        <Button variant="outline" onClick={() => navigate(`/artist-hub/tracks/${track.id}`)}>
-                            Abrir Dashboard
-                        </Button>
-                    </div>
-                ))}
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
             </div>
         </div>
     );

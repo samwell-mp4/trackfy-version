@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { artistHubService } from '../../../services/artistHubService';
 import { Button } from '@components/common/Button';
-<<<<<<< HEAD
 import { CareerRoadmap } from '../components/CareerRoadmap';
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 import './artist-dashboard-view.css';
 
 interface ArtistData {
@@ -55,10 +52,7 @@ export const ArtistDashboard: React.FC = () => {
     const [tracks, setTracks] = useState<any[]>([]);
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
     const [isEditing, setIsEditing] = useState(false);
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 
     useEffect(() => {
         if (id) loadData();
@@ -87,7 +81,6 @@ export const ArtistDashboard: React.FC = () => {
         }
     };
 
-<<<<<<< HEAD
     const handleSaveProfile = async (updates: Partial<ArtistData>) => {
         if (!artist) return;
         try {
@@ -106,8 +99,6 @@ export const ArtistDashboard: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState<'overview' | 'career'>('overview');
 
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
     if (loading) return <div className="loading-spinner">Carregando...</div>;
     if (!artist) return <div className="error-message">Artista não encontrado.</div>;
 
@@ -149,17 +140,12 @@ export const ArtistDashboard: React.FC = () => {
                     <Button variant="outline" onClick={() => navigate('/artist-hub/artists')}>
                         Voltar
                     </Button>
-<<<<<<< HEAD
                     <Button onClick={() => setIsEditing(true)}>
-=======
-                    <Button onClick={() => alert('Editar Artista (Em breve)')}>
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
                         ✏️ Editar Perfil
                     </Button>
                 </div>
             </div>
 
-<<<<<<< HEAD
             {/* Dashboard Tabs */}
             <div className="ad-tabs" style={{
                 display: 'flex',
@@ -348,197 +334,91 @@ export const ArtistDashboard: React.FC = () => {
                         </div>
                     </div>
                 </>
-            )}
+            )
+            }
             {/* Edit Profile Modal */}
-            {isEditing && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h2>Editar Perfil</h2>
-                            <button className="close-btn" onClick={() => setIsEditing(false)}>✕</button>
+            {
+                isEditing && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h2>Editar Perfil</h2>
+                                <button className="close-btn" onClick={() => setIsEditing(false)}>✕</button>
+                            </div>
+                            <div className="modal-body">
+                                <form
+                                    id="edit-artist-form"
+                                    onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        const formData = new FormData(e.currentTarget);
+                                        const updates = Object.fromEntries(formData.entries());
+                                        // Handle nested or specific fields if needed
+                                        await handleSaveProfile({
+                                            ...artist,
+                                            ...updates,
+                                            // Specific mapping for social links if inputs are separate
+                                        });
+                                    }}
+                                >
+                                    <div className="form-group">
+                                        <label>Nome Artístico</label>
+                                        <input name="name" defaultValue={artist.name} required />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Bio</label>
+                                        <textarea name="bio" defaultValue={artist.bio} rows={3} />
+                                    </div>
+
+                                    <h4>Dados Pessoais</h4>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Nome Civil</label>
+                                            <input name="full_name" defaultValue={artist.full_name} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>CPF</label>
+                                            <input name="cpf" defaultValue={artist.cpf} />
+                                        </div>
+                                    </div>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>RG</label>
+                                            <input name="rg" defaultValue={artist.rg} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Data Nascimento</label>
+                                            <input name="birth_date" type="date" defaultValue={artist.birth_date} />
+                                        </div>
+                                    </div>
+
+                                    <h4>Contato</h4>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Telefone</label>
+                                            <input name="phone" defaultValue={artist.phone} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Email Contato</label>
+                                            <input name="email_contact" defaultValue={artist.email_contact} />
+                                        </div>
+                                    </div>
+
+                                    <h4>Responsável / Empresa</h4>
+                                    <div className="form-group">
+                                        <label>Nome da Empresa ou Responsável</label>
+                                        <input name="responsible_company" defaultValue={artist.responsible_company || artist.responsible_name} />
+                                    </div>
+
+                                    <div className="form-actions">
+                                        <Button variant="outline" type="button" onClick={() => setIsEditing(false)}>Cancelar</Button>
+                                        <Button type="submit">Salvar Alterações</Button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <div className="modal-body">
-                            <form
-                                id="edit-artist-form"
-                                onSubmit={async (e) => {
-                                    e.preventDefault();
-                                    const formData = new FormData(e.currentTarget);
-                                    const updates = Object.fromEntries(formData.entries());
-                                    // Handle nested or specific fields if needed
-                                    await handleSaveProfile({
-                                        ...artist,
-                                        ...updates,
-                                        // Specific mapping for social links if inputs are separate
-                                    });
-                                }}
-                            >
-                                <div className="form-group">
-                                    <label>Nome Artístico</label>
-                                    <input name="name" defaultValue={artist.name} required />
-                                </div>
-                                <div className="form-group">
-                                    <label>Bio</label>
-                                    <textarea name="bio" defaultValue={artist.bio} rows={3} />
-                                </div>
-
-                                <h4>Dados Pessoais</h4>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Nome Civil</label>
-                                        <input name="full_name" defaultValue={artist.full_name} />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>CPF</label>
-                                        <input name="cpf" defaultValue={artist.cpf} />
-                                    </div>
-                                </div>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>RG</label>
-                                        <input name="rg" defaultValue={artist.rg} />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Data Nascimento</label>
-                                        <input name="birth_date" type="date" defaultValue={artist.birth_date} />
-                                    </div>
-                                </div>
-
-                                <h4>Contato</h4>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Telefone</label>
-                                        <input name="phone" defaultValue={artist.phone} />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Email Contato</label>
-                                        <input name="email_contact" defaultValue={artist.email_contact} />
-                                    </div>
-                                </div>
-
-                                <h4>Responsável / Empresa</h4>
-                                <div className="form-group">
-                                    <label>Nome da Empresa ou Responsável</label>
-                                    <input name="responsible_company" defaultValue={artist.responsible_company || artist.responsible_name} />
-                                </div>
-
-                                <div className="form-actions">
-                                    <Button variant="outline" type="button" onClick={() => setIsEditing(false)}>Cancelar</Button>
-                                    <Button type="submit">Salvar Alterações</Button>
-                                </div>
-                            </form>
-                        </div>
                     </div>
-                </div>
-            )}
-=======
-            {/* Personal & Contract Info */}
-            <div className="ad-info-grid">
-                <div className="ad-card info-card">
-                    <h3>📄 Dados Cadastrais</h3>
-                    <div className="info-row">
-                        <CopyButton text={artist.full_name || ''} label="Nome Civil" />
-                    </div>
-                    <div className="info-row-group">
-                        <CopyButton text={artist.cpf || ''} label="CPF" />
-                        <CopyButton text={artist.rg || ''} label="RG" />
-                    </div>
-                    <div className="info-row">
-                        <span className="label">Endereço:</span>
-                        <span className="value">{artist.address || 'Não informado'}</span>
-                    </div>
-                </div>
-
-                <div className="ad-card info-card">
-                    <h3>🤝 Responsável / Empresa</h3>
-                    {artist.responsible_name || artist.responsible_company ? (
-                        <>
-                            <div className="info-row">
-                                <span className="label">Empresa/Resp:</span>
-                                <span className="value">{artist.responsible_company || artist.responsible_name}</span>
-                            </div>
-                            <div className="info-row">
-                                <span className="label">Contato:</span>
-                                <span className="value">{artist.responsible_name}</span>
-                            </div>
-                            <div className="info-row-group">
-                                <CopyButton text={artist.responsible_phone || ''} label="Tel" />
-                                <CopyButton text={artist.responsible_email || ''} label="Email" />
-                            </div>
-                        </>
-                    ) : (
-                        <p className="empty-text">Nenhum responsável vinculado.</p>
-                    )}
-                </div>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="ad-stats-grid">
-                <div className="ad-stat-card">
-                    <h3>Streams Totais</h3>
-                    <div className="stat-value">1.2M</div>
-                    <div className="stat-trend positive">↑ 12% este mês</div>
-                </div>
-                <div className="ad-stat-card">
-                    <h3>Seguidores</h3>
-                    <div className="stat-value">45.3K</div>
-                    <div className="stat-trend positive">↑ 5% este mês</div>
-                </div>
-                <div className="ad-stat-card">
-                    <h3>Próximo Lançamento</h3>
-                    <div className="stat-value text-sm">
-                        {events.find(e => e.type === 'release' && new Date(e.start_time) > new Date())?.title || 'Nenhum agendado'}
-                    </div>
-                </div>
-            </div>
-
-            <div className="ad-content-grid">
-                {/* Releases Section */}
-                <div className="ad-section">
-                    <div className="section-header">
-                        <h2>Lançamentos Recentes</h2>
-                        <Button size="sm" onClick={() => navigate('/artist-hub/new-release')}>+ Novo</Button>
-                    </div>
-                    <div className="ad-list">
-                        {tracks.length === 0 && <p className="empty-text">Nenhuma música lançada.</p>}
-                        {tracks.map(track => (
-                            <div key={track.id} className="ad-list-item" onClick={() => navigate(`/artist-hub/tracks/${track.id}`)}>
-                                <div className="item-icon">🎵</div>
-                                <div className="item-info">
-                                    <h4>{track.title}</h4>
-                                    <span>{track.version} • {new Date(track.created_at).toLocaleDateString()}</span>
-                                </div>
-                                <div className={`status-badge status-${track.status}`}>
-                                    {track.status}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Agenda Section */}
-                <div className="ad-section">
-                    <div className="section-header">
-                        <h2>Agenda</h2>
-                        <Button size="sm" onClick={() => navigate('/artist-hub/agenda')}>Ver Completa</Button>
-                    </div>
-                    <div className="ad-list">
-                        {events.length === 0 && <p className="empty-text">Nenhum evento próximo.</p>}
-                        {events.map(event => (
-                            <div key={event.id} className="ad-list-item">
-                                <div className="item-date">
-                                    <span className="day">{new Date(event.start_time).getDate()}</span>
-                                    <span className="month">{new Date(event.start_time).toLocaleDateString('pt-BR', { month: 'short' })}</span>
-                                </div>
-                                <div className="item-info">
-                                    <h4>{event.title}</h4>
-                                    <span>{event.type} • {event.status}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
-        </div>
+                )
+            }
+        </div >
     );
 };

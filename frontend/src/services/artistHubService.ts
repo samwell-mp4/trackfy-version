@@ -14,13 +14,9 @@ async function request(endpoint: string, options: RequestInit = {}) {
     });
 
     if (!response.ok) {
-<<<<<<< HEAD
         if (response.status === 401 || response.status === 403) {
             window.dispatchEvent(new Event('auth:unauthorized'));
         }
-
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
         let errorMessage = `Error ${response.status}: ${response.statusText}`;
         try {
             const errorData = await response.json();

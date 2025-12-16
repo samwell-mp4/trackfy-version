@@ -627,7 +627,7 @@
         justify-content: stretch;
     }
 
-<<<<<<< HEAD
+
 }
 
 /* Status Selector */
@@ -761,9 +761,4 @@
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
     margin: 2rem 0;
-=======
-    .save-bar-actions button {
-        flex: 1;
-    }
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 }

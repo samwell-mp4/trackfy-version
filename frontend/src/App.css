@@ -1,15 +1,8 @@
 #root {
-<<<<<<< HEAD
   width: 100%;
   margin: 0;
   padding: 0;
   text-align: left;
-=======
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 }
 
 .logo {
@@ -18,17 +11,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
-<<<<<<< HEAD
 
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 
-=======
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -37,10 +24,7 @@
   from {
     transform: rotate(0deg);
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
   to {
     transform: rotate(360deg);
   }
@@ -58,8 +42,4 @@
 
 .read-the-docs {
   color: #888;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d

@@ -53,7 +53,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         };
 
         checkAuth();
-<<<<<<< HEAD
 
         const handleUnauthorized = () => {
             console.warn('AuthContext: Received unauthorized event, logging out...');
@@ -65,8 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return () => {
             window.removeEventListener('auth:unauthorized', handleUnauthorized);
         };
-=======
->>>>>>> 2515de915935a0055c33748ef425b911b5c2085d
+
     }, []);
 
     const login = async (email: string, password: string) => {
