@@ -12,12 +12,17 @@ export const Step5Upload: React.FC<Step5Props> = ({ data, updateData }) => {
         if (file) {
             const url = URL.createObjectURL(file);
 
+            // Update file immediately to ensure it's saved even if metadata fails
+            updateData({
+                audioFile: file,
+                audioUrl: url,
+                duration: 0
+            });
+
             // Create audio element to get duration
             const audio = new Audio(url);
             audio.onloadedmetadata = () => {
                 updateData({
-                    audioFile: file,
-                    audioUrl: url,
                     duration: audio.duration
                 });
             };

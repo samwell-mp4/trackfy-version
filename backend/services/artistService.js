@@ -129,6 +129,42 @@ async function deleteTrack(userId, trackId) {
     return true;
 }
 
+async function deleteTrackFile(userId, trackId, fileType) {
+    // 1. Get current track
+    const { data: track, error: getError } = await supabase
+        .from('tracks')
+        .select('metadata')
+        .eq('id', trackId)
+        .eq('user_id', userId)
+        .single();
+
+    if (getError) throw getError;
+
+    // 2. Update metadata
+    const metadata = track.metadata || {};
+    if (!metadata.files) metadata.files = {};
+
+    // Explicitly set to null
+    metadata.files[fileType] = null;
+
+    // Handle special case for mp3/audio_file_url
+    if (fileType === 'mp3') {
+        metadata.audio_file_url = null;
+    }
+
+    // 3. Save updates
+    const { data: updatedTrack, error: updateError } = await supabase
+        .from('tracks')
+        .update({ metadata })
+        .eq('id', trackId)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+    if (updateError) throw updateError;
+    return updatedTrack;
+}
+
 module.exports = {
     listArtists,
     createArtist,
@@ -138,5 +174,6 @@ module.exports = {
     getTrack,
     createTrack,
     updateTrack,
-    deleteTrack
+    deleteTrack,
+    deleteTrackFile
 };

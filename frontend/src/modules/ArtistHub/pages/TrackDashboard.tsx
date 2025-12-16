@@ -440,23 +440,21 @@ export const TrackDashboard: React.FC = () => {
         if (!track || !id) return;
         if (!window.confirm('Tem certeza que deseja excluir este arquivo?')) return;
 
-        const updatedMetadata = { ...track.metadata };
-
-        if (type === 'doc' && typeof index === 'number') {
-            updatedMetadata.files?.docs?.splice(index, 1);
-        } else if (type !== 'doc') {
-            if (updatedMetadata.files) {
-                // @ts-ignore
-                updatedMetadata.files[type] = null;
-            }
-            if (type === 'mp3') updatedMetadata.audio_file_url = undefined;
-        }
-
         try {
-            await artistHubService.updateTrack(id, { metadata: updatedMetadata });
-            const newTrack = { ...track, metadata: updatedMetadata };
-            setTrack(newTrack);
-            setOriginalTrack(JSON.parse(JSON.stringify(newTrack)));
+            if (type === 'doc' && typeof index === 'number') {
+                // For docs (array), we still use the update method
+                const updatedMetadata = JSON.parse(JSON.stringify(track.metadata));
+                updatedMetadata.files?.docs?.splice(index, 1);
+                console.log('Deleting doc, sending update:', updatedMetadata);
+                await artistHubService.updateTrack(id, { metadata: updatedMetadata });
+            } else {
+                // For main files, use the dedicated backend route to ensure persistence
+                console.log(`Deleting ${type} via backend route...`);
+                await artistHubService.deleteTrackFile(id, type);
+            }
+
+            // Reload from server to ensure we have the latest state and confirm persistence
+            await loadTrack(id);
             alert('Arquivo excluído com sucesso.');
         } catch (error) {
             console.error('Error deleting file:', error);

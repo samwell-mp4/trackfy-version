@@ -139,14 +139,20 @@ export const MusicOrganizer: React.FC = () => {
 
             // 2. Upload Audio File if exists
             let uploadedAudioUrl = '';
+            console.log('Checking for audio file to upload:', formData.audioFile);
+
             if (formData.audioFile) {
                 try {
+                    console.log('Starting upload...');
                     const uploadResult: any = await artistHubService.uploadFile(formData.audioFile);
+                    console.log('Upload result:', uploadResult);
                     uploadedAudioUrl = uploadResult.url;
                 } catch (uploadError) {
                     console.error('Error uploading audio:', uploadError);
                     alert('Erro ao fazer upload do áudio. A música será salva sem o arquivo.');
                 }
+            } else {
+                console.warn('No audio file in formData');
             }
 
             // 3. Prepare Track Data
