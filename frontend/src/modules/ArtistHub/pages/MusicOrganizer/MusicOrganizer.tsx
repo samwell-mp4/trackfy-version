@@ -137,7 +137,19 @@ export const MusicOrganizer: React.FC = () => {
                 }
             }
 
-            // 2. Prepare Track Data
+            // 2. Upload Audio File if exists
+            let uploadedAudioUrl = '';
+            if (formData.audioFile) {
+                try {
+                    const uploadResult: any = await artistHubService.uploadFile(formData.audioFile);
+                    uploadedAudioUrl = uploadResult.url;
+                } catch (uploadError) {
+                    console.error('Error uploading audio:', uploadError);
+                    alert('Erro ao fazer upload do áudio. A música será salva sem o arquivo.');
+                }
+            }
+
+            // 3. Prepare Track Data
             // The database schema uses a 'metadata' JSONB column for extra fields
             const trackData = {
                 title: formData.title,
@@ -160,12 +172,18 @@ export const MusicOrganizer: React.FC = () => {
                         role: r.role,
                         percentage: r.percentage
                     })),
-                    audio_file_url: formData.audioUrl || '',
-                    duration: formData.duration
+                    audio_file_url: uploadedAudioUrl,
+                    duration: formData.duration,
+                    files: {
+                        mp3: uploadedAudioUrl, // Assuming MP3 for now, or we could check file type
+                        wav: null,
+                        stems: null,
+                        docs: []
+                    }
                 }
             };
 
-            // 3. Save Track
+            // 4. Save Track
             await artistHubService.createTrack(trackData);
 
             alert('Música organizada com sucesso! 🎵');

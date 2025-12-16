@@ -436,6 +436,34 @@ export const TrackDashboard: React.FC = () => {
         </div>
     );
 
+    const handleDeleteFile = async (type: 'wav' | 'mp3' | 'stems' | 'doc', index?: number) => {
+        if (!track || !id) return;
+        if (!window.confirm('Tem certeza que deseja excluir este arquivo?')) return;
+
+        const updatedMetadata = { ...track.metadata };
+
+        if (type === 'doc' && typeof index === 'number') {
+            updatedMetadata.files?.docs?.splice(index, 1);
+        } else if (type !== 'doc') {
+            if (updatedMetadata.files) {
+                // @ts-ignore
+                updatedMetadata.files[type] = null;
+            }
+            if (type === 'mp3') updatedMetadata.audio_file_url = undefined;
+        }
+
+        try {
+            await artistHubService.updateTrack(id, { metadata: updatedMetadata });
+            const newTrack = { ...track, metadata: updatedMetadata };
+            setTrack(newTrack);
+            setOriginalTrack(JSON.parse(JSON.stringify(newTrack)));
+            alert('Arquivo excluído com sucesso.');
+        } catch (error) {
+            console.error('Error deleting file:', error);
+            alert('Erro ao excluir arquivo.');
+        }
+    };
+
     const renderFiles = () => (
         <div className="files-list">
             {/* WAV */}
@@ -458,9 +486,17 @@ export const TrackDashboard: React.FC = () => {
                         onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'wav')}
                     />
                     {track.metadata.files?.wav ? (
-                        <Button variant="outline" size="sm" onClick={() => window.open(track.metadata.files?.wav, '_blank')}>
-                            ⬇️ Baixar
-                        </Button>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <Button variant="outline" size="sm" onClick={() => window.open(track.metadata.files?.wav, '_blank')}>
+                                ⬇️ Baixar
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => wavInputRef.current?.click()} title="Substituir">
+                                🔄
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteFile('wav')} title="Excluir" style={{ color: '#ef4444' }}>
+                                🗑️
+                            </Button>
+                        </div>
                     ) : (
                         <Button variant="primary" size="sm" onClick={() => wavInputRef.current?.click()} disabled={uploading}>
                             ☁️ Upload WAV
@@ -489,9 +525,17 @@ export const TrackDashboard: React.FC = () => {
                         onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'mp3')}
                     />
                     {track.metadata.files?.mp3 ? (
-                        <Button variant="outline" size="sm" onClick={() => window.open(track.metadata.files?.mp3, '_blank')}>
-                            ⬇️ Baixar
-                        </Button>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <Button variant="outline" size="sm" onClick={() => window.open(track.metadata.files?.mp3, '_blank')}>
+                                ⬇️ Baixar
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => mp3InputRef.current?.click()} title="Substituir">
+                                🔄
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteFile('mp3')} title="Excluir" style={{ color: '#ef4444' }}>
+                                🗑️
+                            </Button>
+                        </div>
                     ) : (
                         <Button variant="primary" size="sm" onClick={() => mp3InputRef.current?.click()} disabled={uploading}>
                             ☁️ Upload MP3
@@ -520,9 +564,17 @@ export const TrackDashboard: React.FC = () => {
                         onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], 'stems')}
                     />
                     {track.metadata.files?.stems ? (
-                        <Button variant="outline" size="sm" onClick={() => window.open(track.metadata.files?.stems, '_blank')}>
-                            ⬇️ Baixar
-                        </Button>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <Button variant="outline" size="sm" onClick={() => window.open(track.metadata.files?.stems, '_blank')}>
+                                ⬇️ Baixar
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => stemsInputRef.current?.click()} title="Substituir">
+                                🔄
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteFile('stems')} title="Excluir" style={{ color: '#ef4444' }}>
+                                🗑️
+                            </Button>
+                        </div>
                     ) : (
                         <Button variant="primary" size="sm" onClick={() => stemsInputRef.current?.click()} disabled={uploading}>
                             ☁️ Upload ZIP
@@ -655,6 +707,15 @@ export const TrackDashboard: React.FC = () => {
                     <div className="td-subtitle">
                         {track.artists?.name} • {track.version} • {track.metadata.subtitle || 'Sem subtítulo'}
                     </div>
+                    {(track.metadata.audio_file_url || track.metadata.files?.mp3 || track.metadata.files?.wav) && (
+                        <div style={{ marginTop: '1rem', width: '100%', maxWidth: '400px' }}>
+                            <audio
+                                controls
+                                src={track.metadata.audio_file_url || track.metadata.files?.mp3 || track.metadata.files?.wav}
+                                style={{ width: '100%', height: '32px' }}
+                            />
+                        </div>
+                    )}
                 </div>
                 <div className="td-actions">
                     <Button variant="outline" onClick={() => setShowShareModal(true)}>
