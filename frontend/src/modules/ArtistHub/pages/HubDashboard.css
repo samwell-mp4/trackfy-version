@@ -26,6 +26,7 @@
 .dashboard-header h1 {
     font-size: 2.5rem;
     background: var(--primary-gradient);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
@@ -265,6 +266,7 @@
 
 .fin-value.highlight {
     background: var(--primary-gradient);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2rem;

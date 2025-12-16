@@ -295,6 +295,7 @@
     color: white;
     margin-bottom: 0.5rem;
     background: linear-gradient(to right, #fff, #cbd5e1);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
