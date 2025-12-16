@@ -60,6 +60,7 @@
     font-size: 1.5rem;
     background: linear-gradient(135deg, #a855f7, #ec4899);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
 }
@@ -231,6 +232,7 @@
     font-size: 1.1rem;
     background: linear-gradient(135deg, #a855f7, #ec4899);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
