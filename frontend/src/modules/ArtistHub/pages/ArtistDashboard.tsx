@@ -351,12 +351,18 @@ export const ArtistDashboard: React.FC = () => {
                                     onSubmit={async (e) => {
                                         e.preventDefault();
                                         const formData = new FormData(e.currentTarget);
-                                        const updates = Object.fromEntries(formData.entries());
-                                        // Handle nested or specific fields if needed
+                                        const updates: any = Object.fromEntries(formData.entries());
+
+                                        // Sanitize empty strings to null
+                                        Object.keys(updates).forEach(key => {
+                                            if (updates[key] === '') {
+                                                updates[key] = null;
+                                            }
+                                        });
+
                                         await handleSaveProfile({
                                             ...artist,
                                             ...updates,
-                                            // Specific mapping for social links if inputs are separate
                                         });
                                     }}
                                 >
