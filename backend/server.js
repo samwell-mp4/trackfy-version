@@ -615,6 +615,16 @@ app.delete('/api/artist-hub/tracks/:id', authenticateToken, async (req, res) => 
     }
 });
 
+app.delete('/api/artist-hub/tracks/:id/files/:type', authenticateToken, async (req, res) => {
+    try {
+        const { id, type } = req.params;
+        const result = await artistService.deleteTrackFile(req.user.id, id, type);
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Events
 app.get('/api/artist-hub/events', authenticateToken, async (req, res) => {
     try {

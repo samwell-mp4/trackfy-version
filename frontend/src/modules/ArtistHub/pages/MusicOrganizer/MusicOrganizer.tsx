@@ -140,8 +140,6 @@ export const MusicOrganizer: React.FC = () => {
                 }
             }
 
-            console.log('Artist ID:', artistId);
-
             // 2. Upload Audio File if present
             let finalAudioUrl = formData.audioUrl;
             let fileType = 'mp3'; // Default
@@ -162,8 +160,6 @@ export const MusicOrganizer: React.FC = () => {
                 } catch (uploadError) {
                     console.error('Error uploading audio:', uploadError);
                     alert('Erro ao fazer upload do arquivo de áudio. A música será salva sem o arquivo.');
-                    // Continue saving without the file url if upload fails? 
-                    // Or return? Let's continue but warn.
                     finalAudioUrl = '';
                 }
             }
@@ -202,8 +198,7 @@ export const MusicOrganizer: React.FC = () => {
             console.log('Track Data to send:', trackData);
 
             // 3. Save Track
-            const savedTrack = await artistHubService.createTrack(trackData);
-            console.log('Track saved successfully:', savedTrack);
+            await artistHubService.createTrack(trackData);
 
             alert('Música organizada com sucesso! 🎵');
             navigate('/artist-hub/tracks');

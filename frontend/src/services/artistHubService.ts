@@ -76,6 +76,7 @@ export const artistHubService = {
     createTrack: (data: any) => request('/tracks', { method: 'POST', body: JSON.stringify(data) }),
     updateTrack: (id: string, data: any) => request(`/tracks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteTrack: (id: string) => request(`/tracks/${id}`, { method: 'DELETE' }),
+    deleteTrackFile: (id: string, type: string) => request(`/tracks/${id}/files/${type}`, { method: 'DELETE' }),
 
     // Shared Tracks
     getSharedTrack: async (token: string, password?: string) => {

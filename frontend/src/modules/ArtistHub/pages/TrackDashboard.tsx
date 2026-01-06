@@ -203,6 +203,40 @@ export const TrackDashboard: React.FC = () => {
         });
     };
 
+    const handleDeleteFile = async (type: 'wav' | 'mp3' | 'stems') => {
+        if (!track || !id) return;
+        if (!window.confirm('Tem certeza que deseja remover este arquivo?')) return;
+
+        try {
+            const updatedMetadata = { ...track.metadata };
+            if (!updatedMetadata.files) updatedMetadata.files = {};
+
+            // @ts-ignore
+            updatedMetadata.files[type] = null;
+            if (type === 'mp3') updatedMetadata.audio_file_url = undefined;
+
+            await artistHubService.updateTrack(id, { metadata: updatedMetadata });
+
+            const newTrack = { ...track, metadata: updatedMetadata };
+            setTrack(newTrack);
+            setOriginalTrack(JSON.parse(JSON.stringify(newTrack)));
+
+            alert('Arquivo removido com sucesso!');
+        } catch (error) {
+            console.error('Erro ao remover arquivo:', error);
+            alert('Erro ao remover arquivo.');
+        }
+    };
+
+    const downloadFile = (url: string, filename: string) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const handleUpload = async (file: File, type: 'cover' | 'wav' | 'mp3' | 'stems' | 'doc') => {
         if (!track || !id) return;
         setUploading(true);
@@ -440,40 +474,6 @@ export const TrackDashboard: React.FC = () => {
         </div>
     );
 
-    const handleDeleteFile = async (type: 'wav' | 'mp3' | 'stems') => {
-        if (!track || !id) return;
-        if (!window.confirm('Tem certeza que deseja remover este arquivo?')) return;
-
-        try {
-            const updatedMetadata = { ...track.metadata };
-            if (!updatedMetadata.files) updatedMetadata.files = {};
-
-            // @ts-ignore
-            updatedMetadata.files[type] = null; // or undefined, but null is often safer for "removed" in JSON
-            if (type === 'mp3') updatedMetadata.audio_file_url = undefined;
-
-            await artistHubService.updateTrack(id, { metadata: updatedMetadata });
-
-            const newTrack = { ...track, metadata: updatedMetadata };
-            setTrack(newTrack);
-            setOriginalTrack(JSON.parse(JSON.stringify(newTrack)));
-
-            alert('Arquivo removido com sucesso!');
-        } catch (error) {
-            console.error('Erro ao remover arquivo:', error);
-            alert('Erro ao remover arquivo.');
-        }
-    };
-
-    const downloadFile = (url: string, filename: string) => {
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     const renderFiles = () => (
         <div className="files-list">
             {/* WAV */}
@@ -710,10 +710,6 @@ export const TrackDashboard: React.FC = () => {
                     </div>
                     {track.metadata.files?.mp3 && (
                         <div className="header-player" style={{ marginTop: '1rem', width: '100%', maxWidth: '500px' }}>
-                            <audio controls style={{ width: '100%', height: '36px' }} key={track.metadata.files.mp3}>
-                                <source src={track.metadata.files.mp3} type="audio/mpeg" />
-                                Seu navegador não suporta o elemento de áudio.
-                            </audio>
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -726,7 +722,7 @@ export const TrackDashboard: React.FC = () => {
                                     coverUrl: track.metadata.cover_url
                                 })}
                             >
-                                🔽 Tocar no Minibarra (Continuar navegando)
+                                🔽 Tocar no Player (Rodapé)
                             </Button>
                         </div>
                     )}

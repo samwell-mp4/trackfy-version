@@ -351,22 +351,85 @@ export const ArtistDashboard: React.FC = () => {
                                     onSubmit={async (e) => {
                                         e.preventDefault();
                                         const formData = new FormData(e.currentTarget);
-                                        const updates = Object.fromEntries(formData.entries());
-                                        // Handle nested or specific fields if needed
+                                        const rawUpdates: any = Object.fromEntries(formData.entries());
+
+                                        // Construct social_links object
+                                        const social_links = {
+                                            instagram: rawUpdates.instagram || null,
+                                            spotify: rawUpdates.spotify || null,
+                                            youtube: rawUpdates.youtube || null,
+                                            tiktok: rawUpdates.tiktok || null,
+                                            apple_music: rawUpdates.apple_music || null,
+                                        };
+
+                                        // Remove individual social fields from updates to avoid cluttering root object
+                                        delete rawUpdates.instagram;
+                                        delete rawUpdates.spotify;
+                                        delete rawUpdates.youtube;
+                                        delete rawUpdates.tiktok;
+                                        delete rawUpdates.apple_music;
+
+                                        const updates = {
+                                            ...rawUpdates,
+                                            social_links
+                                        };
+
+                                        // Sanitize empty strings to null for all fields
+                                        Object.keys(updates).forEach(key => {
+                                            if (updates[key] === '') {
+                                                updates[key] = null;
+                                            }
+                                        });
+
                                         await handleSaveProfile({
                                             ...artist,
                                             ...updates,
-                                            // Specific mapping for social links if inputs are separate
                                         });
                                     }}
                                 >
-                                    <div className="form-group">
-                                        <label>Nome Artístico</label>
-                                        <input name="name" defaultValue={artist.name} required />
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Nome Artístico</label>
+                                            <input name="name" defaultValue={artist.name} required />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Tipo de Artista</label>
+                                            <select name="artist_type" defaultValue={artist.artist_type || 'independent'}>
+                                                <option value="independent">🦅 Avulso (Independente)</option>
+                                                <option value="signed">🏢 Produtora (Assinado)</option>
+                                            </select>
+                                        </div>
                                     </div>
+
                                     <div className="form-group">
                                         <label>Bio</label>
                                         <textarea name="bio" defaultValue={artist.bio} rows={3} />
+                                    </div>
+
+                                    <h4>Redes Sociais & Plataformas</h4>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Instagram (URL)</label>
+                                            <input name="instagram" defaultValue={artist.social_links?.instagram} placeholder="https://instagram.com/..." />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Spotify (URL)</label>
+                                            <input name="spotify" defaultValue={artist.social_links?.spotify} placeholder="https://open.spotify.com/..." />
+                                        </div>
+                                    </div>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>YouTube (URL)</label>
+                                            <input name="youtube" defaultValue={artist.social_links?.youtube} placeholder="https://youtube.com/..." />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>TikTok (URL)</label>
+                                            <input name="tiktok" defaultValue={artist.social_links?.tiktok} placeholder="https://tiktok.com/..." />
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Apple Music (URL)</label>
+                                        <input name="apple_music" defaultValue={artist.social_links?.apple_music} placeholder="https://music.apple.com/..." />
                                     </div>
 
                                     <h4>Dados Pessoais</h4>
@@ -376,19 +439,23 @@ export const ArtistDashboard: React.FC = () => {
                                             <input name="full_name" defaultValue={artist.full_name} />
                                         </div>
                                         <div className="form-group">
-                                            <label>CPF</label>
-                                            <input name="cpf" defaultValue={artist.cpf} />
+                                            <label>Data Nascimento</label>
+                                            <input name="birth_date" type="date" defaultValue={artist.birth_date ? new Date(artist.birth_date).toISOString().split('T')[0] : ''} />
                                         </div>
                                     </div>
                                     <div className="form-row">
                                         <div className="form-group">
+                                            <label>CPF</label>
+                                            <input name="cpf" defaultValue={artist.cpf} />
+                                        </div>
+                                        <div className="form-group">
                                             <label>RG</label>
                                             <input name="rg" defaultValue={artist.rg} />
                                         </div>
-                                        <div className="form-group">
-                                            <label>Data Nascimento</label>
-                                            <input name="birth_date" type="date" defaultValue={artist.birth_date} />
-                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Endereço Completo</label>
+                                        <input name="address" defaultValue={artist.address} />
                                     </div>
 
                                     <h4>Contato</h4>
@@ -398,15 +465,39 @@ export const ArtistDashboard: React.FC = () => {
                                             <input name="phone" defaultValue={artist.phone} />
                                         </div>
                                         <div className="form-group">
-                                            <label>Email Contato</label>
+                                            <label>Email Pessoal</label>
                                             <input name="email_contact" defaultValue={artist.email_contact} />
                                         </div>
                                     </div>
+                                    <div className="form-group">
+                                        <label>Email para Material (Share)</label>
+                                        <input name="share_email" defaultValue={artist.share_email} placeholder="Email para receber links de acesso" />
+                                    </div>
 
                                     <h4>Responsável / Empresa</h4>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Nome do Responsável</label>
+                                            <input name="responsible_name" defaultValue={artist.responsible_name} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Empresa</label>
+                                            <input name="responsible_company" defaultValue={artist.responsible_company} />
+                                        </div>
+                                    </div>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Telefone Resp.</label>
+                                            <input name="responsible_phone" defaultValue={artist.responsible_phone} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Email Resp.</label>
+                                            <input name="responsible_email" defaultValue={artist.responsible_email} />
+                                        </div>
+                                    </div>
                                     <div className="form-group">
-                                        <label>Nome da Empresa ou Responsável</label>
-                                        <input name="responsible_company" defaultValue={artist.responsible_company || artist.responsible_name} />
+                                        <label>Porcentagem (%)</label>
+                                        <input name="responsible_percentage" type="number" step="0.1" defaultValue={artist.responsible_percentage} />
                                     </div>
 
                                     <div className="form-actions">
