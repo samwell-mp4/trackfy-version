@@ -67,8 +67,8 @@
 }
 
 .cr-phase-tab.active {
-    background: rgba(139, 92, 246, 0.1);
-    border-color: #8b5cf6;
+    background: rgba(249, 115, 22, 0.1);
+    border-color: #f97316;
 }
 
 .cr-phase-tab.active .phase-icon {
@@ -108,7 +108,7 @@
 
 .content-header {
     margin-bottom: 2rem;
-    border-left: 4px solid #8b5cf6;
+    border-left: 4px solid #f97316;
     padding-left: 1rem;
 }
 

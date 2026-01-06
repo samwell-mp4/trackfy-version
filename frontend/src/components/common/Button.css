@@ -36,7 +36,7 @@
 
 /* Variants */
 .btn--primary {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: linear-gradient(135deg, #fb923c, #f97316);
     color: white;
     box-shadow: var(--shadow-md);
 }

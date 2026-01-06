@@ -87,7 +87,10 @@ export const Financial: React.FC = () => {
     };
 
     const handleSave = () => {
-        if (!formData.title || !formData.amount || !formData.category) return;
+        if (!formData.title || !formData.amount || !formData.category) {
+            alert("Por favor, preencha todos os campos: Descrição, Valor e Categoria.");
+            return;
+        }
 
         if (editingId) {
             const updated = transactions.map(t =>

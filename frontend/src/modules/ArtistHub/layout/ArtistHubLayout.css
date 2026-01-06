@@ -15,9 +15,8 @@
 /* Sidebar Container */
 .hub-sidebar {
     width: 260px;
-    background: rgba(20, 20, 20, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: #000000;
+    /* Pure black for modern look */
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
@@ -60,11 +59,12 @@
 
 .brand-icon {
     font-size: 1.5rem;
-    background: linear-gradient(135deg, #a855f7, #ec4899);
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    /* Modern Orange Gradient */
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.3));
 }
 
 .brand-text {
@@ -132,15 +132,17 @@
 }
 
 .hub-nav a.active {
-    background: linear-gradient(90deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.05));
-    color: #e879f9;
-    border-left: 3px solid #d946ef;
+    background: linear-gradient(90deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.05));
+    color: #fb923c;
+    /* Light Orange */
+    border-left: 3px solid #f97316;
+    /* Solid Orange */
     font-weight: 600;
 }
 
 .hub-nav a.active svg {
-    stroke: #d946ef;
-    filter: drop-shadow(0 0 8px rgba(217, 70, 239, 0.4));
+    stroke: #f97316;
+    filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4));
 }
 
 /* Footer / Logout */
@@ -232,7 +234,7 @@
 .mobile-brand {
     font-weight: 700;
     font-size: 1.1rem;
-    background: linear-gradient(135deg, #a855f7, #ec4899);
+    background: linear-gradient(135deg, #f97316, #ea580c);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

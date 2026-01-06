@@ -38,7 +38,7 @@ export const TrackList: React.FC = () => {
 
     // Agenda State & Logic
     const [events, setEvents] = useState<Event[]>([]);
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const [currentDate] = useState(new Date());
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<Event | undefined>(undefined);
 
