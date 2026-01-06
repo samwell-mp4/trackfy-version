@@ -16,9 +16,7 @@
 
 .mo-header h1 {
     font-size: 2.5rem;
-    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: white;
     margin: 0 0 12px 0;
     filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.2));
 }
@@ -319,10 +317,18 @@
     .music-organizer-container {
         padding: 1rem;
         padding-bottom: 100px;
+        max-width: 100%;
     }
 
     .mo-content {
-        padding: 24px;
+        padding: 20px;
+        /* Drastically reduce from 48px */
+        border-radius: 16px;
+    }
+
+    .upload-area {
+        padding: 30px 20px;
+        /* Compact upload area */
     }
 
     .form-row {
@@ -364,11 +370,58 @@
 
     .mo-actions {
         flex-direction: column-reverse;
+        /* Save/Next on top or bottom? usually Next is primary. Column reverse puts last item first (Next on top) */
         gap: 16px;
     }
 
     .btn-nav {
         justify-content: center;
         width: 100%;
+        padding: 16px;
+        /* Larger touch target */
+    }
+
+    /* Mobile Participants List */
+    .participant-item {
+        padding: 16px;
+        flex-direction: column;
+        /* Force column */
+    }
+
+    /* Target the inner flex container that holds Info + Actions */
+    .participant-item>div {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+
+    /* Info Section */
+    .participant-item>div>div:first-child {
+        width: 100%;
+    }
+
+    /* Actions Section (Buttons) */
+    .participant-item>div>div:last-child {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        /* 3 buttons */
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    /* When Editing */
+    .participant-item input {
+        width: 100%;
+        margin-bottom: 8px;
+        /* Spacing between inputs */
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+    }
+
+    .participant-item button {
+        justify-content: center;
+        height: 44px;
+        /* easier to tap */
     }
 }

@@ -25,10 +25,11 @@
 
 .dashboard-header h1 {
     font-size: 2.5rem;
-    background: var(--primary-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: white;
+    /* Force white */
+    background: none;
+    /* Remove gradient text for better visibility if requested, or ensure it's light */
+    -webkit-text-fill-color: initial;
     margin-bottom: 8px;
     font-weight: 800;
 }
@@ -36,6 +37,14 @@
 .dashboard-header p {
     color: var(--text-secondary);
     font-size: 1.1rem;
+}
+
+.fin-value {
+    font-size: 1.4rem;
+}
+
+.fin-value.highlight {
+    font-size: 1.6rem;
 }
 
 /* Grid Layout */
@@ -292,6 +301,7 @@
 @media (max-width: 1200px) {
     .dashboard-grid {
         grid-template-columns: repeat(2, 1fr);
+        /* 2 cols tablet */
     }
 
     .glass-card {
@@ -304,28 +314,77 @@
 }
 
 @media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+        padding-bottom: 100px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+    }
+
+    /* Stack cards in 2 columns on mobile too to save space */
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        /* Tighter gap */
     }
 
+    /* Financial Section takes full width */
+    .financial-section,
+    .glass-card:has(.widget-list),
+    /* Widgets (Agenda, Expenses) might need full width if complex */
+    .glass-card:nth-child(n) {
+        /* Or just make everything 2 cols except complex ones? Let's try flexible approach */
+        grid-column: span 2 !important;
+        /* Default to full width for readability, but we want 2 cols... */
+    }
+
+    /* Let's be specific for the top stats: 2 cols */
+    /* Stats Row items (Pending Tasks, Total Artists, Catalog) */
+    .dashboard-grid>.glass-card:nth-child(1),
+    .dashboard-grid>.glass-card:nth-child(2),
+    .dashboard-grid>.glass-card:nth-child(3),
+    .dashboard-grid>.glass-card:nth-child(6)
+
+    /* Investment */
+        {
+        grid-column: span 1 !important;
+        padding: 16px;
+        /* Compact padding */
+    }
+
+    /* Complex widgets (Contracts, Agenda, Expenses) -> Full Width */
+    .dashboard-grid>.glass-card:nth-child(4),
+    /* Contracts */
+    .dashboard-grid>.glass-card:nth-child(5),
+    /* Agenda */
+    .dashboard-grid>.glass-card:nth-child(6),
+    /* Expenses - wait, index might shift. Let's use class based if possible or just accept full width for lists */
+    .widget-list {
+        /* Keep lists readable */
+    }
+
+    /* Correction: let's try a hybrid. 
+       - Stats: 2 cols
+       - Lists: Full width
+    */
+    .dashboard-grid>.glass-card:has(.stat-value) {
+        grid-column: span 1 !important;
+    }
+
+    .dashboard-grid>.glass-card:has(.widget-list),
+    .financial-section {
+        grid-column: span 2 !important;
+    }
+
+
+    /* Financial Strip - Scrollable or Compact Grid */
     .financial-strip {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 24px;
-    }
-
-    .fin-metric {
-        width: 100%;
-        padding: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        padding-bottom: 16px;
-    }
-
-    .fin-metric:last-child {
-        border-bottom: none;
-    }
-
-    .fin-divider {
-        display: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        font-size: 1.6rem;
     }
 }
+
+```

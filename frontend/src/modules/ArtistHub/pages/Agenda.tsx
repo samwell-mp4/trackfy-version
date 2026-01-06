@@ -92,7 +92,7 @@ export const Agenda: React.FC = () => {
                 <div className="agenda-main">
                     <div className="page-header">
                         <div className="header-left">
-                            <h1>📅 Agenda</h1>
+                            <h1 style={{ color: 'white' }}>Agenda</h1>
                             <div className="date-controls">
                                 <button onClick={prevMonth}>&lt;</button>
                                 <span>{currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</span>
@@ -101,11 +101,36 @@ export const Agenda: React.FC = () => {
                         </div>
                         <div className="header-actions">
                             <Button variant={view === 'month' ? 'primary' : 'outline'} onClick={() => setView('month')}>Mês</Button>
-                            {/* List view implementation pending, keeping button for now */}
-                            {/* <Button variant={view === 'list' ? 'primary' : 'outline'} onClick={() => setView('list')}>Lista</Button> */}
+                            <Button onClick={() => document.querySelector('.agenda-sidebar')?.classList.toggle('show-mobile')}>
+                                🌪️ Filtros
+                            </Button>
                             <Button onClick={handleNewEvent}>+ Novo Evento</Button>
                         </div>
                     </div>
+
+                    {/* Mobile Filters Drawer Style */}
+                    <style>{`
+                        @media (max-width: 768px) {
+                            .agenda-sidebar.show-mobile {
+                                display: block !important;
+                                position: fixed;
+                                top: 0; left: 0; bottom: 0;
+                                width: 80%;
+                                z-index: 1000;
+                                background: #1e293b; 
+                                padding: 20px;
+                                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+                            }
+                            /* Overlay when menu is open */
+                            .agenda-sidebar.show-mobile::before {
+                                content: '';
+                                position: fixed;
+                                top: 0; left: 0; right: 0; bottom: 0;
+                                background: rgba(0,0,0,0.5);
+                                z-index: -1;
+                            }
+                        }
+                    `}</style>
 
                     {loading ? (
                         <div className="loading-state">Carregando agenda...</div>

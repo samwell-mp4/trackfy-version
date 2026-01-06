@@ -36,6 +36,7 @@ export const artistHubService = {
     getArtists: () => request('/artists'),
     createArtist: (data: any) => request('/artists', { method: 'POST', body: JSON.stringify(data) }),
     updateArtist: (id: string, data: any) => request(`/artists/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteArtist: (id: string) => request(`/artists/${id}`, { method: 'DELETE' }),
     createArtistUser: (artistId: string, data: any) => request(`/artists/${artistId}/user`, { method: 'POST', body: JSON.stringify(data) }),
 
     // Files

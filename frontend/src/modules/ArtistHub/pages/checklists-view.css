@@ -4,6 +4,8 @@
     flex-direction: column;
     max-width: 1400px;
     margin: 0 auto;
+    padding: 2rem;
+    /* Add standard 2rem padding for desktop */
 }
 
 .page-header {
@@ -13,20 +15,20 @@
     margin-bottom: 32px;
     flex-wrap: wrap;
     gap: 16px;
+    padding: 0;
+    /* Let page padding handle it */
 }
 
 .page-header h1 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     display: flex;
     align-items: center;
     gap: 12px;
-    background: linear-gradient(135deg, #fff, #a5b4fc);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: white;
+    /* Force white */
 }
 
 .header-actions {
@@ -422,56 +424,63 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .checklists-page {
+        padding: 1rem;
         padding-bottom: 100px;
         height: auto;
-        min-height: 100vh;
-        overflow-y: auto;
+        overflow-x: hidden;
+        /* Prevent horizontal scroll */
+        width: 100%;
     }
 
     .page-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
-        margin-bottom: 24px;
+        gap: 12px;
+        margin-bottom: 20px;
     }
 
+    /* Fix "Icon too big" - Target the emoji in h1 */
     .page-header h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        /* Smaller font */
         width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        /* Closer gap */
     }
 
-    /* Fix Squashed Tabs: Use Horizontal Scroll */
+    /* Fix squashed tabs */
     .header-actions {
         display: flex;
         width: 100%;
         overflow-x: auto;
-        gap: 12px;
-        padding-bottom: 8px;
+        gap: 8px;
+        padding-bottom: 4px;
+        margin-bottom: 8px;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-    }
-
-    .header-actions::-webkit-scrollbar {
-        display: none;
+        flex-wrap: nowrap;
+        /* Prevent wrap */
     }
 
     .header-actions button {
-        flex-shrink: 0;
-        /* Prevent squashing */
+        flex: 0 0 auto;
         white-space: nowrap;
-        padding: 8px 16px;
-        font-size: 0.9rem;
+        padding: 10px 16px;
+        font-size: 0.85rem;
     }
 
+    /* Fix Content Padding Overflow */
     .checklists-content {
         padding: 16px;
         border-radius: 16px;
         height: auto;
-        overflow: visible;
-        background: transparent;
-        /* Remove heavy background on mobile */
-        border: none;
-        box-shadow: none;
+        background: rgba(17, 24, 39, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        width: 100%;
+        box-sizing: border-box;
+        /* Crucial for padding */
     }
 
     /* Stack Layouts */
@@ -480,86 +489,44 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
-        height: auto;
-        overflow: visible;
+        width: 100%;
     }
 
-    /* Sidebar (List Selection) */
+    /* Sidebar */
     .lists-sidebar {
         height: auto;
-        max-height: 300px;
-        overflow-y: auto;
-        background: rgba(30, 41, 59, 0.5);
-        backdrop-filter: blur(10px);
+        max-height: 250px;
+        width: 100%;
+        box-sizing: border-box;
         margin-bottom: 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    /* List Items */
-    .list-item {
-        padding: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .list-info {
-        flex: 1;
-        min-width: 0;
-        /* Allow text truncate */
-    }
-
-    .list-info h4 {
-        font-size: 0.95rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .delete-btn {
-        padding: 8px;
-        margin-left: 8px;
-        font-size: 1.2rem;
-        color: #ef4444;
-        /* Make delete more visible */
-        opacity: 0.8;
     }
 
     /* Detail View */
     .list-detail {
-        height: auto;
-        overflow: visible;
-        background: transparent;
-        border: none;
         padding: 0;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .detail-header {
-        background: rgba(30, 41, 59, 0.5);
-        padding: 20px;
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 16px;
         margin-bottom: 16px;
     }
 
     .detail-header h2 {
-        font-size: 1.3rem;
-        line-height: 1.3;
+        font-size: 1.2rem;
     }
 
     /* Progress Stats */
     .progress-stats {
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 12px;
         justify-content: space-between;
+        margin-top: 12px;
     }
 
     .progress-stats span {
-        font-size: 0.8rem;
-    }
-
-    .progress-stats .dot {
-        display: none;
+        font-size: 0.85rem;
     }
 
     /* Tasks List */
@@ -569,14 +536,24 @@
     }
 
     .task-item {
-        background: rgba(30, 41, 59, 0.5);
+        background: rgba(30, 41, 59, 0.4);
         border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .task-title {
+        font-size: 1rem;
     }
 
     /* Templates Grid */
     .templates-grid {
         grid-template-columns: 1fr;
         padding: 0;
-        overflow: visible;
+    }
+
+    .template-card {
+        padding: 20px;
+        background: rgba(30, 41, 59, 0.5);
     }
 }

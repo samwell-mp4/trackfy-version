@@ -215,7 +215,7 @@ export const Checklists: React.FC = () => {
     return (
         <div className="checklists-page">
             <div className="page-header">
-                <h1>✅ Checklists & Processos</h1>
+                <h1 style={{ color: 'white' }}>Checklists & Processos</h1>
                 <div className="header-actions">
                     <Button
                         variant={activeTab === 'my_lists' ? 'primary' : 'outline'}

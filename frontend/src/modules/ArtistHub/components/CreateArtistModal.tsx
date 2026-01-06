@@ -130,16 +130,20 @@ export const CreateArtistModal: React.FC<CreateArtistModalProps> = ({ isOpen, on
                                 onClick={() => updateField('artist_type', 'signed')}
                             >
                                 <div className="icon">🏢</div>
-                                <h4>Produtora (Signed)</h4>
-                                <p>Artista agenciado pela produtora.</p>
+                                <div>
+                                    <h4>Produtora</h4>
+                                    <p>Artista agenciado.</p>
+                                </div>
                             </div>
                             <div
                                 className={`type-card ${formData.artist_type === 'independent' ? 'selected' : ''}`}
                                 onClick={() => updateField('artist_type', 'independent')}
                             >
                                 <div className="icon">🦅</div>
-                                <h4>Avulso (Independent)</h4>
-                                <p>Artista independente ou parceiro.</p>
+                                <div>
+                                    <h4>Avulso</h4>
+                                    <p>Artista independente.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -262,7 +266,7 @@ export const CreateArtistModal: React.FC<CreateArtistModalProps> = ({ isOpen, on
                 return (
                     <div className="wizard-step">
                         <h3>Acesso ao Sistema</h3>
-                        <div className="user-creation-section" style={{ background: 'rgba(139, 92, 246, 0.1)', padding: '1.5rem', borderRadius: '12px' }}>
+                        <div className="user-creation-section">
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', marginBottom: formData.create_user ? '1.5rem' : '0', fontSize: '1.1rem' }}>
                                 <input
                                     type="checkbox"
@@ -302,6 +306,15 @@ export const CreateArtistModal: React.FC<CreateArtistModalProps> = ({ isOpen, on
         }
     };
 
+    // Close on Escape key
+    React.useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+        if (isOpen) window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
     const steps: Step[] = ['type', 'personal', 'artistic', 'responsible', 'access'];
@@ -321,13 +334,13 @@ export const CreateArtistModal: React.FC<CreateArtistModalProps> = ({ isOpen, on
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content artist-wizard-modal">
+        <div className="modal-overlay" onClick={onClose} aria-hidden="true">
+            <div className="modal-content artist-wizard-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="wizard-header">
                     <h2>Novo Cadastro</h2>
-                    <div className="step-indicator">
-                        Passo {currentStepIndex + 1} de {steps.length}
-                    </div>
+                    <button className="close-modal-btn" onClick={onClose} aria-label="Fechar">
+                        ✕
+                    </button>
                 </div>
 
                 {error && <div className="error-message">{error}</div>}

@@ -24,41 +24,68 @@
     gap: 1rem;
 }
 
-.artist-list-item {
+/* Header & Search */
+.header-title-row {
     display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-bar input {
+    width: 280px;
+    padding: 10px 16px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.search-bar input:focus {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #8b5cf6;
+    width: 320px;
+}
+
+/* List Item Grid Layout */
+.artist-list-item {
+    display: grid;
+    grid-template-columns: 250px 1fr 150px;
+    /* Main Info | Quick Info | Actions */
+    gap: 16px;
     align-items: center;
-    justify-content: space-between;
+    padding: 16px 24px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
 .artist-list-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateX(5px);
-    border-color: rgba(139, 92, 246, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    border-color: rgba(139, 92, 246, 0.2);
 }
 
-.artist-info-main {
+/* Main Column */
+.artist-col-main {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 16px;
 }
 
 .artist-avatar-small {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #2d3748;
+    background: #334155;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     overflow: hidden;
-    flex-shrink: 0;
 }
 
 .artist-avatar-small img {
@@ -67,42 +94,80 @@
     object-fit: cover;
 }
 
-.artist-info-main h3 {
+.artist-info h3 {
     margin: 0;
     font-size: 1.1rem;
+    color: white;
     font-weight: 600;
 }
 
 .artist-role-badge {
     font-size: 0.75rem;
     color: #94a3b8;
-    background: rgba(148, 163, 184, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     padding: 2px 8px;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
-.artist-stats-preview {
+/* Quick Info Column */
+.artist-col-info {
     display: flex;
-    gap: 1rem;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-.stat-pill {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
+.quick-info {
+    font-size: 0.9rem;
     color: #cbd5e1;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: copy;
+    transition: background 0.2s;
 }
 
-.artist-actions-arrow {
+.quick-info:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: white;
+}
+
+/* Actions Column */
+.artist-col-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.action-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.action-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.action-icon-btn.delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.arrow-nav {
+    margin-left: 8px;
+    color: var(--text-secondary);
     font-size: 1.2rem;
-    color: #64748b;
-    transition: transform 0.2s;
-}
-
-.artist-list-item:hover .artist-actions-arrow {
-    transform: translateX(5px);
-    color: #a78bfa;
 }
 
 .empty-state {
@@ -118,49 +183,65 @@
 @media (max-width: 768px) {
     .artists-page {
         padding: 1rem;
-        padding-bottom: 100px;
+        padding-bottom: 120px;
     }
 
     .page-header {
         flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
+        align-items: flex-start;
+        /* Left align */
+        gap: 16px;
+        margin-bottom: 20px;
     }
 
     .page-header h1 {
         font-size: 1.5rem;
-        text-align: center;
+        /* Reduced size */
+        margin: 0;
     }
 
-    .page-header button {
+    /* List Container */
+    .artists-list-container {
         width: 100%;
     }
 
     .artist-list-item {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px;
         align-items: flex-start;
-        gap: 1rem;
-        padding: 1.25rem;
     }
 
-    .artist-info-main {
+    .artist-col-main {
         width: 100%;
     }
 
-    .artist-stats-preview {
+    /* Keep avatar hidden on mobile as per previous request? Or show small?
+       Previous instruction was to hide layout. Let's keep it clean but show actions.
+    */
+    .artist-avatar-small {
+        display: none;
+    }
+
+    .artist-col-info {
         width: 100%;
         flex-direction: column;
-        gap: 0.5rem;
-        padding-left: 64px;
-        /* Align with text (48px avatar + 16px gap) */
+        gap: 8px;
     }
 
-    .stat-pill {
-        width: fit-content;
+    .quick-info {
+        width: 100%;
+        box-sizing: border-box;
     }
 
-    .artist-actions-arrow {
+    .artist-col-actions {
+        width: 100%;
+        justify-content: flex-start;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .arrow-nav {
         display: none;
-        /* Hide arrow on mobile */
     }
 }

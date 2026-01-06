@@ -1,11 +1,69 @@
-.public-registration-page {
-    min-height: 100vh;
-    background: #0f172a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    color: white;
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .public-registration-page {
+        padding: 1rem;
+        align-items: flex-start;
+        /* Align top on mobile */
+    }
+
+    .registration-container {
+        padding: 1.5rem;
+        /* Reduce from 3rem */
+    }
+
+    .reg-header {
+        margin-bottom: 2rem;
+    }
+
+    .reg-header h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Steps */
+    .progress-steps {
+        overflow-x: auto;
+        justify-content: flex-start;
+        gap: 12px;
+        margin-bottom: 2rem;
+        padding-bottom: 10px;
+        /* Scrollbar space */
+    }
+
+    .step {
+        flex-shrink: 0;
+        font-size: 0.8rem;
+    }
+
+    .line {
+        display: none;
+        /* Hide lines on mobile if scrolling */
+    }
+
+    /* Form */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .participant-row {
+        flex-direction: column;
+        gap: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        /* Buttons stack */
+        gap: 12px;
+    }
+
+    .form-actions button {
+        width: 100%;
+        justify-content: center;
+        padding: 14px;
+    }
 }
 
 .registration-container {
@@ -26,9 +84,7 @@
 .reg-header h1 {
     font-size: 2rem;
     margin-bottom: 0.5rem;
-    background: linear-gradient(to right, #8b5cf6, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: white;
 }
 
 .reg-header p {

@@ -215,113 +215,115 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSucce
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content event-modal">
+        <div className="modal-overlay" onClick={onClose} aria-hidden="true">
+            <div className="modal-content event-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>{event ? 'Editar Evento' : 'Novo Evento'}</h2>
-                    <button className="close-btn" onClick={onClose}>×</button>
+                    <button className="close-btn" onClick={onClose} aria-label="Fechar">✕</button>
                 </div>
 
-                {error && <div className="error-message">{error}</div>}
+                <div className="modal-body">
+                    {error && <div className="error-message">{error}</div>}
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-row">
-                        <div className="form-group flex-2">
-                            <label>Título *</label>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-row">
+                            <div className="form-group flex-2">
+                                <label>Título *</label>
+                                <input
+                                    type="text"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="Título do evento"
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="form-group flex-1">
+                                <label>Tipo</label>
+                                <select value={type} onChange={(e) => setType(e.target.value)}>
+                                    <option value="other">Outro</option>
+                                    <option value="release">Lançamento</option>
+                                    <option value="show">Show</option>
+                                    <option value="meeting">Reunião</option>
+                                    <option value="recording">Gravação</option>
+                                    <option value="content">Conteúdo</option>
+                                    <option value="deadline">Deadline</option>
+                                    <option value="rehearsal">Ensaio</option>
+                                    <option value="travel">Viagem</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Início *</label>
+                                <input
+                                    type="datetime-local"
+                                    value={startTime}
+                                    onChange={(e) => setStartTime(e.target.value)}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Fim *</label>
+                                <input
+                                    type="datetime-local"
+                                    value={endTime}
+                                    onChange={(e) => setEndTime(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Status</label>
+                                <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                                    <option value="planned">Planejado</option>
+                                    <option value="confirmed">Confirmado</option>
+                                    <option value="completed">Concluído</option>
+                                    <option value="cancelled">Cancelado</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Prioridade</label>
+                                <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+                                    <option value="low">Baixa</option>
+                                    <option value="medium">Média</option>
+                                    <option value="high">Alta</option>
+                                    <option value="critical">Crítica</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Local</label>
                             <input
                                 type="text"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Título do evento"
-                                autoFocus
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                placeholder="Local físico ou link da reunião"
                             />
                         </div>
-                        <div className="form-group flex-1">
-                            <label>Tipo</label>
-                            <select value={type} onChange={(e) => setType(e.target.value)}>
-                                <option value="other">Outro</option>
-                                <option value="release">Lançamento</option>
-                                <option value="show">Show</option>
-                                <option value="meeting">Reunião</option>
-                                <option value="recording">Gravação</option>
-                                <option value="content">Conteúdo</option>
-                                <option value="deadline">Deadline</option>
-                                <option value="rehearsal">Ensaio</option>
-                                <option value="travel">Viagem</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div className="form-row">
                         <div className="form-group">
-                            <label>Início *</label>
-                            <input
-                                type="datetime-local"
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
+                            <label>Descrição</label>
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                rows={3}
                             />
                         </div>
-                        <div className="form-group">
-                            <label>Fim *</label>
-                            <input
-                                type="datetime-local"
-                                value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)}
-                            />
-                        </div>
-                    </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Status</label>
-                            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                                <option value="planned">Planejado</option>
-                                <option value="confirmed">Confirmado</option>
-                                <option value="completed">Concluído</option>
-                                <option value="cancelled">Cancelado</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Prioridade</label>
-                            <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-                                <option value="low">Baixa</option>
-                                <option value="medium">Média</option>
-                                <option value="high">Alta</option>
-                                <option value="critical">Crítica</option>
-                            </select>
-                        </div>
-                    </div>
+                        {renderMetadataFields()}
+                    </form>
+                </div>
 
-                    <div className="form-group">
-                        <label>Local</label>
-                        <input
-                            type="text"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            placeholder="Local físico ou link da reunião"
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Descrição</label>
-                        <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={3}
-                        />
-                    </div>
-
-                    {renderMetadataFields()}
-
-                    <div className="modal-actions">
-                        <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={loading}>
-                            {loading ? 'Salvar' : (event ? 'Atualizar' : 'Agendar')}
-                        </Button>
-                    </div>
-                </form>
+                <div className="modal-actions">
+                    <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleSubmit} disabled={loading}>
+                        {loading ? 'Salvar' : (event ? 'Atualizar' : 'Agendar')}
+                    </Button>
+                </div>
             </div>
         </div>
     );

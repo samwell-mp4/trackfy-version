@@ -430,11 +430,11 @@ export const MediaLibrary: React.FC = () => {
             {/* Main Content */}
             <div className="ml-main">
                 <div className="ml-header">
-                    <h1>Biblioteca de Arquivos</h1>
+                    <h1 style={{ color: 'white' }}>Arquivos</h1>
                     <div className="ml-search">
                         <input
                             type="text"
-                            placeholder="Buscar arquivos..."
+                            placeholder="Buscar..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />

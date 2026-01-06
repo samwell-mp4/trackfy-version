@@ -51,7 +51,7 @@ export const PublicTrackRegistration: React.FC = () => {
         <div className="public-registration-page">
             <div className="registration-container">
                 <div className="reg-header">
-                    <h1>🎵 Registro de Nova Música</h1>
+                    <h1 style={{ color: 'white' }}>Registro de Nova Música</h1>
                     <p>Envie sua música para a produtora e inicie o processo de lançamento.</p>
                 </div>
 
