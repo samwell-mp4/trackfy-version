@@ -675,7 +675,7 @@ export const TrackDashboard: React.FC = () => {
                                 <div style={{ display: 'flex', gap: '6px' }}>
                                     {right.isEditing ? (
                                         <Button size="sm" onClick={() => {
-                                            const newRights = [...track.metadata.rights];
+                                            const newRights = [...(track.metadata.rights || [])];
                                             newRights[index].isEditing = false;
                                             updateMetadata('rights', newRights);
                                             handleSave(); // Auto save
