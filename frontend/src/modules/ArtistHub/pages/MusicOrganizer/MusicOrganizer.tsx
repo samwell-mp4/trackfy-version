@@ -113,12 +113,14 @@ export const MusicOrganizer: React.FC = () => {
     };
 
     const handleSave = async () => {
+        console.log('handleSave initiated', formData);
         try {
             // 1. Handle Artist (Create if new)
             let artistId = formData.mainArtist?.id;
 
             // @ts-ignore
             if (formData.mainArtist?.isNew) {
+                console.log('Creating new artist...');
                 try {
                     const newArtist = await artistHubService.createArtist({
                         name: formData.mainArtist.name,
@@ -129,6 +131,7 @@ export const MusicOrganizer: React.FC = () => {
                         instagram: formData.mainArtist.instagram,
                         status: 'active'
                     });
+                    console.log('New artist created:', newArtist);
                     artistId = newArtist.id;
                 } catch (error) {
                     console.error('Error creating artist:', error);
@@ -137,7 +140,35 @@ export const MusicOrganizer: React.FC = () => {
                 }
             }
 
-            // 2. Prepare Track Data
+            console.log('Artist ID:', artistId);
+
+            // 2. Upload Audio File if present
+            let finalAudioUrl = formData.audioUrl;
+            let fileType = 'mp3'; // Default
+
+            if (formData.audioFile) {
+                console.log('Uploading audio file...');
+                try {
+                    // Determine type based on file
+                    if (formData.audioFile.type.includes('wav')) {
+                        fileType = 'wav';
+                    } else if (formData.audioFile.name.endsWith('.wav')) {
+                        fileType = 'wav';
+                    }
+
+                    const uploadResult: any = await artistHubService.uploadFile(formData.audioFile);
+                    console.log('Audio uploaded:', uploadResult);
+                    finalAudioUrl = uploadResult.url;
+                } catch (uploadError) {
+                    console.error('Error uploading audio:', uploadError);
+                    alert('Erro ao fazer upload do arquivo de áudio. A música será salva sem o arquivo.');
+                    // Continue saving without the file url if upload fails? 
+                    // Or return? Let's continue but warn.
+                    finalAudioUrl = '';
+                }
+            }
+
+            // 3. Prepare Track Data
             // The database schema uses a 'metadata' JSONB column for extra fields
             const trackData = {
                 title: formData.title,
@@ -160,13 +191,19 @@ export const MusicOrganizer: React.FC = () => {
                         role: r.role,
                         percentage: r.percentage
                     })),
-                    audio_file_url: formData.audioUrl || '',
-                    duration: formData.duration
+                    audio_file_url: finalAudioUrl,
+                    duration: formData.duration,
+                    files: {
+                        [fileType]: finalAudioUrl // Assign to mp3 or wav
+                    }
                 }
             };
 
+            console.log('Track Data to send:', trackData);
+
             // 3. Save Track
-            await artistHubService.createTrack(trackData);
+            const savedTrack = await artistHubService.createTrack(trackData);
+            console.log('Track saved successfully:', savedTrack);
 
             alert('Música organizada com sucesso! 🎵');
             navigate('/artist-hub/tracks');

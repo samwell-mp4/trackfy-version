@@ -74,6 +74,11 @@ const AppContent = () => {
   );
 };
 
+import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import { FooterPlayer } from './components/AudioPlayer/FooterPlayer';
+
+// ... (imports remain the same, just adding new ones)
+
 function App() {
   console.log('App.tsx: Rendering App component');
   return (
@@ -81,7 +86,10 @@ function App() {
       <ErrorBoundary>
         <AuthProvider>
           <VideoProvider>
-            <AppContent />
+            <AudioPlayerProvider>
+              <AppContent />
+              <FooterPlayer />
+            </AudioPlayerProvider>
           </VideoProvider>
         </AuthProvider>
       </ErrorBoundary>
