@@ -56,7 +56,7 @@ export const Artists: React.FC = () => {
         }
     };
 
-    const handleEdit = (e: React.MouseEvent, artist: Artist) => {
+    const handleEdit = (e: React.MouseEvent, _artist: Artist) => {
         e.stopPropagation();
         // Open modal pre-filled (To be implemented fully, for now just open create modal as placeholder or TODO)
         // Ideally we would pass the artist to the modal
