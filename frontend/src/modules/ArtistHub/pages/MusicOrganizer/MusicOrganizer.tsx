@@ -198,10 +198,17 @@ export const MusicOrganizer: React.FC = () => {
             console.log('Track Data to send:', trackData);
 
             // 3. Save Track
+            // 3. Save Track
+            console.log('Sending track data to API...');
             await artistHubService.createTrack(trackData);
 
-            alert('Música organizada com sucesso! 🎵');
-            navigate('/artist-hub/tracks');
+            console.log('Track created successfully!');
+
+            // Force a small delay to ensure the UI updates if needed, though alert blocks.
+            setTimeout(() => {
+                alert('Música organizada com sucesso! 🎵\nEla agora aparecerá na sua lista de músicas.');
+                navigate('/artist-hub/tracks');
+            }, 100);
 
         } catch (error) {
             console.error('Error saving track:', error);

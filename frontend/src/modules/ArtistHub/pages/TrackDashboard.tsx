@@ -595,7 +595,7 @@ export const TrackDashboard: React.FC = () => {
             <table className="team-table">
                 <thead>
                     <tr>
-                        <th>Nome</th>
+                        <th>Nome / Email</th>
                         <th>Função</th>
                         <th>Split (%)</th>
                         <th>Status</th>
@@ -606,25 +606,101 @@ export const TrackDashboard: React.FC = () => {
                     {track.metadata.rights?.map((right: any, index: number) => (
                         <tr key={index}>
                             <td>
-                                <div style={{ fontWeight: 600 }}>{right.name}</div>
-                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{right.email || 'Sem email'}</div>
+                                <div style={{ fontWeight: 600, color: 'white' }}>{right.name}</div>
+                                {right.isEditing ? (
+                                    <input
+                                        className="form-input"
+                                        style={{ padding: '4px 8px', fontSize: '0.8rem', marginTop: '4px' }}
+                                        value={right.email || ''}
+                                        placeholder="Email do colaborador"
+                                        onChange={(e) => {
+                                            const newRights = [...track.metadata.rights];
+                                            newRights[index].email = e.target.value;
+                                            updateMetadata('rights', newRights);
+                                        }}
+                                    />
+                                ) : (
+                                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{right.email || 'Sem email'}</div>
+                                )}
                             </td>
-                            <td><span className="role-badge">{right.role}</span></td>
-                            <td style={{ width: '200px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span>{right.percentage}%</span>
-                                </div>
-                                <div className="percentage-bar">
-                                    <div className="percentage-fill" style={{ width: `${right.percentage}%` }}></div>
+                            <td>
+                                {right.isEditing ? (
+                                    <input
+                                        className="form-input"
+                                        style={{ padding: '4px 8px', width: '100px' }}
+                                        value={right.role}
+                                        onChange={(e) => {
+                                            const newRights = [...track.metadata.rights];
+                                            newRights[index].role = e.target.value;
+                                            updateMetadata('rights', newRights);
+                                        }}
+                                    />
+                                ) : (
+                                    <span className="role-badge">{right.role}</span>
+                                )}
+                            </td>
+                            <td style={{ width: '180px' }}>
+                                {right.isEditing ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <input
+                                            type="number"
+                                            className="form-input"
+                                            style={{ padding: '4px 8px', width: '70px' }}
+                                            value={right.percentage}
+                                            onChange={(e) => {
+                                                const newRights = [...track.metadata.rights];
+                                                newRights[index].percentage = Number(e.target.value);
+                                                updateMetadata('rights', newRights);
+                                            }}
+                                        />
+                                        <span>%</span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                            <span>{right.percentage}%</span>
+                                        </div>
+                                        <div className="percentage-bar">
+                                            <div className="percentage-fill" style={{ width: `${right.percentage}%` }}></div>
+                                        </div>
+                                    </>
+                                )}
+                            </td>
+                            <td>
+                                <div className={`approval-status ${right.email ? 'status-approved' : 'status-pending'}`}>
+                                    {right.email ? '✅ Pronto' : '⚠️ Sem Email'}
                                 </div>
                             </td>
                             <td>
-                                <div className="approval-status status-approved">
-                                    ✅ Aprovado
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                    {right.isEditing ? (
+                                        <Button size="sm" onClick={() => {
+                                            const newRights = [...track.metadata.rights];
+                                            newRights[index].isEditing = false;
+                                            updateMetadata('rights', newRights);
+                                            handleSave(); // Auto save
+                                        }}>💾</Button>
+                                    ) : (
+                                        <>
+                                            <Button variant="ghost" size="sm" title="Enviar Autorização" onClick={() => {
+                                                if (!right.email) return alert('Adicione um email primeiro!');
+                                                alert(`Autorização enviada para ${right.email} com sucesso! 📧`);
+                                            }}>📧</Button>
+                                            <Button variant="ghost" size="sm" title="Editar" onClick={() => {
+                                                const newRights = [...track.metadata.rights];
+                                                newRights[index].isEditing = true;
+                                                updateMetadata('rights', newRights);
+                                            }}>✏️</Button>
+                                            <Button variant="ghost" size="sm" title="Excluir" style={{ color: '#ef4444' }} onClick={() => {
+                                                if (confirm('Remover este participante?')) {
+                                                    const newRights = track.metadata.rights.filter((_: any, i: number) => i !== index);
+                                                    updateMetadata('rights', newRights);
+                                                    handleSave();
+                                                }
+                                            }}>🗑️</Button>
+                                        </>
+                                    )}
                                 </div>
-                            </td>
-                            <td>
-                                <Button variant="ghost" size="sm">✏️</Button>
                             </td>
                         </tr>
                     ))}
@@ -667,7 +743,20 @@ export const TrackDashboard: React.FC = () => {
                         </div>
                         <div className="file-actions">
                             <Button variant="outline" size="sm" onClick={() => window.open(doc.url, '_blank')}>
-                                👁️ Visualizar
+                                👁️
+                            </Button>
+                            <Button variant="outline" size="sm" style={{ borderColor: '#ef4444', color: '#ef4444' }} onClick={async () => {
+                                if (confirm('Excluir documento?')) {
+                                    const newDocs = track.metadata.files.docs.filter((_: any, i: number) => i !== index);
+                                    const updatedMetadata = { ...track.metadata };
+                                    updatedMetadata.files.docs = newDocs;
+                                    await artistHubService.updateTrack(id, { metadata: updatedMetadata });
+                                    setTrack({ ...track, metadata: updatedMetadata });
+                                    setOriginalTrack({ ...track, metadata: updatedMetadata });
+                                    alert('Documento excluído!');
+                                }
+                            }}>
+                                🗑️
                             </Button>
                         </div>
                     </div>

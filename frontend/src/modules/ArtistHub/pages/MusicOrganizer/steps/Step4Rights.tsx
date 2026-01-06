@@ -52,7 +52,30 @@ export const Step4Rights: React.FC<Step4Props> = ({ data, updateData }) => {
                 <tbody>
                     {data.rights?.map((r: any) => (
                         <tr key={r.id}>
-                            <td>{r.name}</td>
+                            <td>
+                                {r.name}
+                                {r.id !== 'main' && (
+                                    <button
+                                        onClick={() => {
+                                            if (confirm('Remover este participante da divisão de royalties?')) {
+                                                const updatedRights = data.rights.filter((right: any) => right.id !== r.id);
+                                                updateData({ rights: updatedRights });
+                                            }
+                                        }}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            marginLeft: '8px',
+                                            fontSize: '0.8rem',
+                                            opacity: 0.6
+                                        }}
+                                        title="Remover"
+                                    >
+                                        ❌
+                                    </button>
+                                )}
+                            </td>
                             <td><span className="role-badge">{r.role}</span></td>
                             <td style={{ textAlign: 'right' }}>
                                 <input
