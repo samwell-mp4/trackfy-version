@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { createContext, useState, useEffect } from 'react';
-import type { AuthContextType, User } from '@/types/auth.types';
+import type { AuthContextType, User, RegisterData } from '@/types/auth.types';
 
 const BACKEND_URL = import.meta.env.DEV ? '' : 'https://saas-video-saas-app.o9g2gq.easypanel.host';
 
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const login = async (email: string, password: string): Promise<User | void> => {
         setIsLoading(true);
         try {
             // Call backend API for login
@@ -96,8 +96,63 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setUser(userToSave);
             localStorage.setItem('videosia_user', JSON.stringify(userToSave));
             localStorage.setItem('videosia_token', token);
+            return userToSave;
         } catch (error) {
             console.error('Login error:', error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const register = async (data: RegisterData) => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${BACKEND_URL}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    usuario: data.name,
+                    email: data.email,
+                    password: data.password,
+                    role: data.role,
+                    artistic_name: data.artistic_name,
+                    musical_genre: data.musical_genre,
+                    company_name: data.company_name,
+                    managed_artists_count: data.managed_artists_count
+                }),
+            });
+
+            if (!response.ok) {
+                let errorMessage = 'Erro ao criar conta';
+                try {
+                    const error = await response.json();
+                    errorMessage = error.error || errorMessage;
+                } catch (e) {
+                    // Fallback to text if JSON parse fails
+                    const text = await response.text();
+                    errorMessage = text || errorMessage;
+                }
+                throw new Error(errorMessage);
+            }
+
+            const { token, user: userData } = await response.json();
+
+            const userToSave: User = {
+                id: userData.id.toString(),
+                usuario: userData.usuario,
+                email: userData.email,
+                role: userData.role
+            };
+
+            // Save to state and localStorage
+            setUser(userToSave);
+            localStorage.setItem('videosia_user', JSON.stringify(userToSave));
+            localStorage.setItem('videosia_token', token);
+        } catch (error) {
+            console.error('Register error:', error);
             throw error;
         } finally {
             setIsLoading(false);
@@ -116,6 +171,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         isAuthenticated: !!user,
         isLoading,
         login,
+        register,
         logout
     };
 

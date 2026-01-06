@@ -3,12 +3,14 @@ import { AuthProvider } from '@contexts/AuthContext';
 import { VideoProvider } from '@contexts/VideoContext';
 import { ProtectedRoute } from '@components/auth/ProtectedRoute';
 import { Login } from '@pages/Login';
-import { Dashboard } from '@pages/Dashboard';
+import { Register } from '@pages/Register';
 import { StatusPopup } from '@components/common/StatusPopup';
 import { ErrorBoundary } from '@components/common/ErrorBoundary';
 import { useVideo } from '@contexts/VideoContext';
 import '@styles/global.css';
 import './App.css';
+import { useAuth } from '@hooks/useAuth';
+import { LoadingScreen } from '@components/common/LoadingScreen';
 
 import { ArtistHubLayout } from './modules/ArtistHub/layout/ArtistHubLayout';
 import { HubDashboard } from './modules/ArtistHub/pages/HubDashboard';
@@ -25,6 +27,12 @@ import { ArtistDashboard } from './modules/ArtistHub/pages/ArtistDashboard';
 
 const AppContent = () => {
   const { isGenerating, generationStatus, notification } = useVideo();
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       <StatusPopup
@@ -34,18 +42,11 @@ const AppContent = () => {
       />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* Public Shared Route */}
         <Route path="/shared/:token" element={<SharedTrackView />} />
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
 
         {/* Artista Hub Routes */}
         <Route
@@ -68,7 +69,7 @@ const AppContent = () => {
           <Route path="organizer" element={<MusicOrganizer />} />
         </Route>
 
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/artist-hub" replace />} />
       </Routes>
     </>
   );

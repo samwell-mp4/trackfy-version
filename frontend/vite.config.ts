@@ -48,6 +48,8 @@ export default defineConfig({
     port: 3100,
     proxy: {
       '/login': 'http://localhost:8052',
+      '/register': 'http://localhost:8052',
+      '/me': 'http://localhost:8052',
       '/api': 'http://localhost:8052',
       '/highlights': 'http://localhost:8052',
       '/uploads': 'http://localhost:8052'

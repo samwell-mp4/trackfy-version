@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@hooks/useAuth';
 import { Button } from '@components/common/Button';
@@ -24,7 +24,7 @@ export const Login: React.FC = () => {
 
         try {
             await login(email, password);
-            navigate('/dashboard');
+            navigate('/artist-hub');
         } catch (err: any) {
             setError(err.message || 'Email ou senha inválidos');
         }
@@ -44,8 +44,8 @@ export const Login: React.FC = () => {
             >
                 <div className="login-card">
                     <div className="login-header">
-                        <h1 className="login-title">I.A - Vídeos</h1>
-                        <p className="login-subtitle">Crie vídeos incríveis com IA</p>
+                        <img src="/logo-light.png" alt="Trackfy" className="login-logo-img" />
+                        <p className="login-subtitle">Gestão Inteligente para sua Música</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="login-form">
@@ -85,8 +85,11 @@ export const Login: React.FC = () => {
                     </form>
 
                     <div className="login-footer">
+                        <p className="login-link-text">
+                            Não tem uma conta? <Link to="/register">Registrar-se</Link>
+                        </p>
                         <p className="login-footer-text">
-                            Powered by Samwell Midias & Ds Do Havai
+                            Powered by Samwell Midia
                         </p>
                     </div>
                 </div>

@@ -16,9 +16,10 @@
 .login-gradient {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%,
-            rgba(99, 102, 241, 0.15) 0%,
-            transparent 50%);
+    background: radial-gradient(circle at 50% 50%,
+            rgba(249, 115, 22, 0.15) 0%,
+            rgba(0, 0, 0, 0.9) 70%,
+            #000 100%);
 }
 
 .login-container {
@@ -30,11 +31,12 @@
 }
 
 .login-card {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(249, 115, 22, 0.15);
     border-radius: var(--radius-xl);
     padding: var(--spacing-8);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(249, 115, 22, 0.05);
     backdrop-filter: blur(10px);
 }
 
@@ -43,15 +45,12 @@
     margin-bottom: var(--spacing-8);
 }
 
-.login-title {
-    font-family: var(--font-display);
-    font-size: var(--text-4xl);
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: var(--spacing-2);
+.login-logo-img {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: var(--spacing-4);
+    filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.3));
 }
 
 .login-subtitle {
@@ -76,8 +75,26 @@
 }
 
 .login-footer {
-    margin-top: var(--spacing-6);
+    margin-top: var(--spacing-8);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.login-link-text {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+.login-link-text a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link-text a:hover {
+    text-decoration: underline;
 }
 
 .login-footer-text {

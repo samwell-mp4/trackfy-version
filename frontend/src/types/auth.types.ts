@@ -2,6 +2,20 @@ export interface User {
     id: string;
     usuario: string;
     email: string;
+    role?: 'producer' | 'artist' | 'manager' | 'admin';
+    artistic_name?: string;
+    company_name?: string;
+}
+
+export interface RegisterData {
+    name: string;
+    email: string;
+    password: string;
+    role: 'producer' | 'artist' | 'manager';
+    artistic_name?: string;
+    musical_genre?: string;
+    company_name?: string;
+    managed_artists_count?: number;
 }
 
 export interface AuthContextType {
@@ -9,7 +23,8 @@ export interface AuthContextType {
     token: string | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string) => Promise<User | void>;
+    register: (data: RegisterData) => Promise<void>;
     logout: () => void;
 }
 

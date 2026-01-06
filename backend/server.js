@@ -69,6 +69,87 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// Register Route
+app.post('/register', async (req, res) => {
+    const {
+        usuario,
+        email,
+        password,
+        role,
+        artistic_name,
+        musical_genre,
+        company_name,
+        managed_artists_count
+    } = req.body;
+
+    if (!usuario || !email || !password || !role) {
+        return res.status(400).json({ error: 'Campos obrigatórios faltando (usuario, email, senha, função)' });
+    }
+
+    try {
+        // 1. Verificar se o usuário já existe
+        const { data: existingUser } = await supabase
+            .from('users')
+            .select('id')
+            .eq('email', email)
+            .single();
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'Este email já está cadastrado' });
+        }
+
+        // 2. Inserir novo usuário com todos os dados do Quiz
+        const { data: newUser, error: insertError } = await supabase
+            .from('users')
+            .insert([{
+                usuario,
+                email,
+                password, // Nota: Em produção, use hash de senha
+                role,
+                artistic_name: artistic_name || null,
+                musical_genre: musical_genre || null,
+                company_name: company_name || null,
+                managed_artists_count: managed_artists_count ? parseInt(managed_artists_count) : null
+            }])
+            .select()
+            .single();
+
+        if (insertError) {
+            console.error('Erro ao inserir usuário:', insertError);
+            return res.status(500).json({ error: 'Erro ao criar conta' });
+        }
+
+        // 3. Gerar Token JWT
+        const token = jwt.sign(
+            {
+                id: newUser.id,
+                email: newUser.email,
+                usuario: newUser.usuario,
+                role: newUser.role,
+                artist_id: newUser.artist_id // Provavelmente null no registro inicial, mas ok
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            user: {
+                id: newUser.id,
+                email: newUser.email,
+                usuario: newUser.usuario,
+                role: newUser.role,
+                artistic_name: newUser.artistic_name, // Retornar novos campos se útil
+                company_name: newUser.company_name
+            }
+        });
+
+    } catch (err) {
+        console.error('Erro no registro:', err);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+});
+
 // Middleware de Autenticação (Exemplo para rotas protegidas futuras)
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];

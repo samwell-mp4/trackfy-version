@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import {
     Home,
@@ -11,7 +11,6 @@ import {
     Folder,
     DollarSign,
     LogOut,
-    ChevronLeft,
     Menu,
     X
 } from 'lucide-react';
@@ -19,7 +18,6 @@ import './ArtistHubLayout.css';
 
 export const ArtistHubLayout: React.FC = () => {
     const { logout } = useAuth();
-    const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -39,10 +37,6 @@ export const ArtistHubLayout: React.FC = () => {
             {isMobileMenuOpen && <div className="mobile-overlay" onClick={closeMobileMenu}></div>}
 
             <aside className={`hub-sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
-                <div className="hub-logo" onClick={() => { navigate('/dashboard'); closeMobileMenu(); }}>
-                    <ChevronLeft size={20} />
-                    <span>Voltar ao Dashboard</span>
-                </div>
 
                 <div className="hub-brand">
                     <div className="brand-icon">🎸</div>
