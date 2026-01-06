@@ -614,7 +614,7 @@ export const TrackDashboard: React.FC = () => {
                                         value={right.email || ''}
                                         placeholder="Email do colaborador"
                                         onChange={(e) => {
-                                            const newRights = [...track.metadata.rights];
+                                            const newRights = [...(track.metadata.rights || [])];
                                             newRights[index].email = e.target.value;
                                             updateMetadata('rights', newRights);
                                         }}
@@ -630,7 +630,7 @@ export const TrackDashboard: React.FC = () => {
                                         style={{ padding: '4px 8px', width: '100px' }}
                                         value={right.role}
                                         onChange={(e) => {
-                                            const newRights = [...track.metadata.rights];
+                                            const newRights = [...(track.metadata.rights || [])];
                                             newRights[index].role = e.target.value;
                                             updateMetadata('rights', newRights);
                                         }}
@@ -648,7 +648,7 @@ export const TrackDashboard: React.FC = () => {
                                             style={{ padding: '4px 8px', width: '70px' }}
                                             value={right.percentage}
                                             onChange={(e) => {
-                                                const newRights = [...track.metadata.rights];
+                                                const newRights = [...(track.metadata.rights || [])];
                                                 newRights[index].percentage = Number(e.target.value);
                                                 updateMetadata('rights', newRights);
                                             }}
@@ -687,13 +687,13 @@ export const TrackDashboard: React.FC = () => {
                                                 alert(`Autorização enviada para ${right.email} com sucesso! 📧`);
                                             }}>📧</Button>
                                             <Button variant="ghost" size="sm" title="Editar" onClick={() => {
-                                                const newRights = [...track.metadata.rights];
+                                                const newRights = [...(track.metadata.rights || [])];
                                                 newRights[index].isEditing = true;
                                                 updateMetadata('rights', newRights);
                                             }}>✏️</Button>
                                             <Button variant="ghost" size="sm" title="Excluir" style={{ color: '#ef4444' }} onClick={() => {
                                                 if (confirm('Remover este participante?')) {
-                                                    const newRights = track.metadata.rights.filter((_: any, i: number) => i !== index);
+                                                    const newRights = (track.metadata.rights || []).filter((_: any, i: number) => i !== index);
                                                     updateMetadata('rights', newRights);
                                                     handleSave();
                                                 }
@@ -747,13 +747,18 @@ export const TrackDashboard: React.FC = () => {
                             </Button>
                             <Button variant="outline" size="sm" style={{ borderColor: '#ef4444', color: '#ef4444' }} onClick={async () => {
                                 if (confirm('Excluir documento?')) {
-                                    const newDocs = track.metadata.files.docs.filter((_: any, i: number) => i !== index);
+                                    const currentDocs = track.metadata.files?.docs || [];
+                                    const newDocs = currentDocs.filter((_: any, i: number) => i !== index);
                                     const updatedMetadata = { ...track.metadata };
+                                    if (!updatedMetadata.files) updatedMetadata.files = {};
                                     updatedMetadata.files.docs = newDocs;
-                                    await artistHubService.updateTrack(id, { metadata: updatedMetadata });
-                                    setTrack({ ...track, metadata: updatedMetadata });
-                                    setOriginalTrack({ ...track, metadata: updatedMetadata });
-                                    alert('Documento excluído!');
+
+                                    if (id) {
+                                        await artistHubService.updateTrack(id, { metadata: updatedMetadata });
+                                        setTrack({ ...track, metadata: updatedMetadata });
+                                        setOriginalTrack({ ...track, metadata: updatedMetadata });
+                                        alert('Documento excluído!');
+                                    }
                                 }
                             }}>
                                 🗑️
