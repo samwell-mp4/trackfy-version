@@ -10,24 +10,31 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-// Configurar CORS
-const corsOptions = {
-    origin: '*', // Permitir todas as origens
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    credentials: false // Não usar com origin: '*'
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-// Middleware manual de fallback para garantir headers (Redundância necessária para alguns ambientes)
+// NUCLEAR CORS FIX: Manualmente tratar tudo antes de qualquer outra coisa
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
+    res.header("Access-Control-Allow-Credentials", "true");
+
+    // Se for preflight, responde aqui e morre aqui.
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
     next();
 });
+
+// O pacote cors continua aqui como backup para validações extras se necessário, 
+// mas o manual acima já deve ter resolvido o bloqueio do navegador.
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: false
+};
+
+app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions)); // Comentado pois o manual já trata OPTIONS
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
