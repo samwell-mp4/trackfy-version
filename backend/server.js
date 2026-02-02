@@ -10,7 +10,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+// Configurar CORS
+app.use(cors({
+    origin: '*', // Permitir todas as origens (ou configure seus domínios específicos)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+// Responder explicitamente a OPTIONS para evitar timeouts de preflight
+app.options('*', cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
