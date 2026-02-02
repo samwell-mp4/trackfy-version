@@ -15,7 +15,32 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Supabase Client
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+// Check essential environment variables
+const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'JWT_SECRET'];
+const missingEnvVars = requiredEnvVars.filter(key => !process.env[key]);
+
+if (missingEnvVars.length > 0) {
+    console.error(`❌ Missing required environment variables: ${missingEnvVars.join(', ')}`);
+    // We don't exit here to allow the server to start and maybe serve health checks or static files,
+    // but API calls will likely fail.
+} else {
+    console.log('✅ Environment variables check passed');
+}
+
+// Supabase Client
+let supabase;
+try {
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+        throw new Error('Supabase URL or Key missing');
+    }
+    supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+    console.log('✅ Supabase client initialized');
+} catch (err) {
+    console.error('❌ Failed to initialize Supabase client:', err.message);
+    // Create a dummy client or handle gracefull failure in routes?
+    // For now, let it be undefined, and routes will crash if they use it.
+    // Better than crashing the entire server on startup.
+}
 
 // Login Route
 app.post('/login', async (req, res) => {
