@@ -8,28 +8,28 @@ export default defineConfig({
   base: '/',
   plugins: [
     react(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-      manifest: {
-        name: 'ArtistHub SaaS',
-        short_name: 'ArtistHub',
-        description: 'Your all-in-one artist management platform',
-        theme_color: '#ffffff',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    })
+    // VitePWA({
+    //   registerType: 'autoUpdate',
+    //   includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+    //   manifest: {
+    //     name: 'ArtistHub SaaS',
+    //     short_name: 'ArtistHub',
+    //     description: 'Your all-in-one artist management platform',
+    //     theme_color: '#ffffff',
+    //     icons: [
+    //       {
+    //         src: 'pwa-192x192.png',
+    //         sizes: '192x192',
+    //         type: 'image/png'
+    //       },
+    //       {
+    //         src: 'pwa-512x512.png',
+    //         sizes: '512x512',
+    //         type: 'image/png'
+    //       }
+    //     ]
+    //   }
+    // })
   ],
   resolve: {
     alias: {
@@ -45,10 +45,24 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3100,
+    port: 3101,
     proxy: {
-      '/login': 'http://localhost:8052',
-      '/register': 'http://localhost:8052',
+      '/login': {
+        target: 'http://localhost:8052',
+        bypass: (req) => {
+          if (req.method === 'GET' && req.headers.accept?.includes('text/html')) {
+            return req.url;
+          }
+        }
+      },
+      '/register': {
+        target: 'http://localhost:8052',
+        bypass: (req) => {
+          if (req.method === 'GET' && req.headers.accept?.includes('text/html')) {
+            return req.url;
+          }
+        }
+      },
       '/me': 'http://localhost:8052',
       '/api': 'http://localhost:8052',
       '/highlights': 'http://localhost:8052',

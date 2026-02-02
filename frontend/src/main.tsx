@@ -3,6 +3,16 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// Force unregister service workers to fix stale cache issues
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function (registrations) {
+    for (let registration of registrations) {
+      console.log('Unregistering SW:', registration);
+      registration.unregister();
+    }
+  });
+}
+
 console.log('main.tsx: Starting mount');
 
 try {
