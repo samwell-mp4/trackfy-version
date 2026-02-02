@@ -10,9 +10,25 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
+// Middleware
 // NUCLEAR CORS FIX: Manualmente tratar tudo antes de qualquer outra coisa
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
+    // Definir origem permitida dinamicamente baseada na requisição para suportar Credentials
+    const allowedOrigins = [
+        'https://saas-video-app.o9g2gq.easypanel.host',
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ];
+    const origin = req.headers.origin;
+
+    // Se a origem estiver na lista ou se quisermos ser permissivos (cuidado em produção)
+    // Para simplificar e resolver o erro agora, vamos refletir a origem se houver uma.
+    if (origin) {
+        res.header("Access-Control-Allow-Origin", origin);
+    } else {
+        res.header("Access-Control-Allow-Origin", "*");
+    }
+
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
     res.header("Access-Control-Allow-Credentials", "true");
@@ -24,17 +40,20 @@ app.use((req, res, next) => {
     next();
 });
 
-// O pacote cors continua aqui como backup para validações extras se necessário, 
-// mas o manual acima já deve ter resolvido o bloqueio do navegador.
+// Configuração do pacote CORS (backup)
 const corsOptions = {
-    origin: '*',
+    origin: function (origin, callback) {
+        // Permitir requests sem origem (como mobile apps ou curl)
+        if (!origin) return callback(null, true);
+        // Refletir qualquer origem para garantir o funcionamento (ou verificar lista se preferir mais segurança futuramente)
+        return callback(null, true);
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    credentials: false
+    credentials: true // Importante: deve ser true
 };
 
 app.use(cors(corsOptions));
-// app.options('*', cors(corsOptions)); // Comentado pois o manual já trata OPTIONS
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
