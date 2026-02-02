@@ -11,13 +11,23 @@ const port = process.env.PORT || 3000;
 
 // Middleware
 // Configurar CORS
-app.use(cors({
-    origin: '*', // Permitir todas as origens (ou configure seus domínios específicos)
+const corsOptions = {
+    origin: '*', // Permitir todas as origens
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-// Responder explicitamente a OPTIONS para evitar timeouts de preflight
-app.options('*', cors());
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: false // Não usar com origin: '*'
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Middleware manual de fallback para garantir headers (Redundância necessária para alguns ambientes)
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
+    next();
+});
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
