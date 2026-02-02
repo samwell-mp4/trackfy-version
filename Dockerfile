@@ -10,6 +10,9 @@ RUN apk add --no-cache bash curl python3 ffmpeg
 # Diretório de trabalho
 WORKDIR /app
 
+# Definir porta 80 como padrão para o app
+ENV PORT=80
+
 # ========================================
 # BACKEND - Node.js puro (sem build necessário)
 # ========================================
