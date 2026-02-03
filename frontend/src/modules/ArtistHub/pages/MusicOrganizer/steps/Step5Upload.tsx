@@ -55,7 +55,7 @@ export const Step5Upload: React.FC<Step5Props> = ({ data, updateData }) => {
                     <div style={{ padding: '40px 0', color: 'var(--text-secondary)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🎧</div>
                         <div style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Arraste ou clique para enviar o áudio</div>
-                        <div style={{ fontSize: '0.9rem' }}>WAV, MP3 ou AAC</div>
+                        <div style={{ fontSize: '0.9rem' }}>WAV, MP3 ou AAC (Máx. 100MB)</div>
                     </div>
                 )}
                 <input

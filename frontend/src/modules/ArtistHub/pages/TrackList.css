@@ -228,11 +228,10 @@
     transform: translateX(0);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .track-list-page {
         padding: 1rem;
         padding-bottom: 6rem;
-        /* Space for bottom nav if exists */
     }
 
     /* Header */
@@ -246,12 +245,11 @@
         font-size: 1.75rem;
     }
 
-    /* Metrics Compact on Mobile */
+    /* Metrics Compact */
     .tl-metrics-row {
         gap: 1rem;
         padding: 1rem;
         overflow-x: auto;
-        /* Scroll horizontally if needed */
         flex-wrap: nowrap;
         justify-content: flex-start;
         -webkit-overflow-scrolling: touch;
@@ -259,10 +257,6 @@
 
     .tl-metric-card {
         flex-shrink: 0;
-    }
-
-    .tl-metric-card .value {
-        font-size: 1.1rem;
     }
 
     /* Filters Stack */
@@ -287,25 +281,22 @@
 
     .track-info-section {
         width: 100%;
-        flex-grow: 0;
     }
 
     .track-meta-row {
         width: 100%;
         justify-content: space-between;
-        /* Artist Left, Status Right */
         margin-top: 0.5rem;
     }
 
     .track-actions-section {
         width: 100%;
         justify-content: space-between;
-        /* Actions Left, Button Right */
         margin-left: 0;
-        /* Reset desktop override */
+        gap: 1rem;
     }
 
-    /* Show quick actions always on mobile/touch since no hover */
+    /* Always show actions on touch/smaller screens */
     .quick-actions-hover {
         opacity: 1;
         position: relative;
@@ -316,7 +307,13 @@
         pointer-events: auto;
     }
 
-    /* Make Main Button full width on very small screens */
+    /* Ensure buttons are large enough for touch */
+    .icon-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
     .track-actions-section button:last-child {
         flex-grow: 1;
     }

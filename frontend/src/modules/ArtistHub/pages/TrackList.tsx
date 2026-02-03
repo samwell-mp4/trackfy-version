@@ -4,6 +4,7 @@ import { Button } from '@components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { AgendaCalendar } from '../components/Agenda/AgendaCalendar';
 import { EventModal } from '../components/Agenda/EventModal';
+import { TrackQuickEditModal } from '../components/TrackQuickEditModal';
 import './TrackList.css';
 
 interface Track {
@@ -41,6 +42,10 @@ export const TrackList: React.FC = () => {
     const [currentDate] = useState(new Date());
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<Event | undefined>(undefined);
+
+    // Quick Edit State
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [trackToEdit, setTrackToEdit] = useState<any>(null);
 
     // Filters State
     const [searchQuery, setSearchQuery] = useState('');
@@ -321,6 +326,10 @@ export const TrackList: React.FC = () => {
                                         <div className="track-actions-section">
                                             <div className="quick-actions-hover">
                                                 <button className="icon-btn" onClick={() => handleShare(track)} title="Compartilhar">🔗</button>
+                                                <button className="icon-btn" onClick={() => {
+                                                    setTrackToEdit(track);
+                                                    setIsEditModalOpen(true);
+                                                }} title="Editar">✏️</button>
                                                 <button className="icon-btn delete-btn" onClick={() => handleDelete(track.id)} title="Excluir">🗑️</button>
                                             </div>
                                             <Button variant="outline" onClick={() => navigate(`/artist-hub/tracks/${track.id}`)}>
@@ -344,6 +353,17 @@ export const TrackList: React.FC = () => {
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={loadEvents}
                 event={selectedEvent}
+            />
+
+            {/* Quick Edit Modal */}
+            <TrackQuickEditModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onSuccess={() => {
+                    loadData();
+                    // Optional: show toast
+                }}
+                track={trackToEdit}
             />
         </div>
     );
