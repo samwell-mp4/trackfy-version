@@ -1,29 +1,34 @@
 .agenda-calendar {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    /* BRUTE FORCE FIX: Fixed width to ensure absolutely no calculation errors */
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: none !important;
 }
 
 .weekdays-header {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    /* Use minmax(0, 1fr) to allow text truncation inside columns */
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     text-align: center;
     font-weight: 600;
     color: #94a3b8;
     margin-bottom: 0.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
 }
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 1px;
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    overflow: hidden;
-    flex: 1;
+    overflow: visible;
+    width: 100%;
 }
 
 .calendar-day {
@@ -87,6 +92,8 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    max-width: 100%;
+    /* Ensure pill doesn't exceed cell width */
 }
 
 .event-pill:hover {
@@ -268,18 +275,26 @@
 /* Mobile Responsiveness for Calendar */
 @media (max-width: 768px) {
     .agenda-calendar {
+        display: block;
+        /* Change from flex to block for scroll */
         overflow-x: auto;
-        /* Allow horizontal scroll */
+        -webkit-overflow-scrolling: touch;
         padding-bottom: 1rem;
     }
 
     .weekdays-header,
     .calendar-grid {
-        min-width: 600px;
-        /* Force minimum width to trigger scroll */
+        min-width: 800px;
+        /* Ensure enough width for 7 days */
     }
 
     .calendar-day {
         min-height: 80px;
+    }
+
+    .event-pill {
+        font-size: 0.7rem;
+        padding: 4px 6px;
+        /* Slightly larger targets */
     }
 }

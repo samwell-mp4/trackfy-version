@@ -1,32 +1,33 @@
 .artist-hub-layout {
     display: flex;
-    height: 100vh;
-    height: 100dvh;
-    /* Use dynamic viewport height for better mobile/tablet support */
+    min-height: 100vh;
+    /* Allow body to grow */
     width: 100%;
     background-color: #0a0a0a;
     color: #ffffff;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    overflow: hidden;
-    /* Prevent body scroll, handle in hub-content */
-    position: relative;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll on window */
+    overflow-y: auto;
+    /* Allow vertical scroll */
 }
 
-/* Sidebar Container */
 .hub-sidebar {
     width: 260px;
     background: #000000;
-    /* Pure black for modern look */
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
     padding: 24px;
     box-sizing: border-box;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
     height: 100vh;
+    /* Full viewport height */
+    position: sticky;
+    /* Stick to top while scrolling */
+    top: 0;
     flex-shrink: 0;
-    /* Prevent shrinking */
+    overflow-y: auto;
 }
 
 /* Back Button / Logo Area */
@@ -177,13 +178,15 @@
 /* Main Content Area */
 .hub-content {
     flex: 1;
-    overflow-y: auto;
     overflow-x: hidden;
-    /* Prevent horizontal scroll */
+    /* Prevent horizontal spill */
+    overflow-y: visible;
+    /* Allow vertical flow */
     background: radial-gradient(circle at top right, #1a1a2e, #0a0a0a);
     position: relative;
     width: 100%;
     box-sizing: border-box;
+    min-height: 100vh;
 }
 
 /* Scrollbar Styling */

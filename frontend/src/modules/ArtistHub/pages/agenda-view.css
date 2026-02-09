@@ -1,15 +1,23 @@
 .agenda-page {
-    height: 100%;
+    /* Flow naturally */
+    width: 100%;
     display: flex;
     flex-direction: column;
     background: var(--bg-dark);
-    overflow: hidden;
 }
 
 .agenda-container {
     display: flex;
     flex: 1;
-    overflow: hidden;
+    /* Removed overflow: hidden */
+    flex-direction: column;
+    /* Mobile first approach often better, but let's keep flex row for desktop */
+}
+
+@media (min-width: 769px) {
+    .agenda-container {
+        flex-direction: row;
+    }
 }
 
 .agenda-main {
@@ -17,7 +25,19 @@
     display: flex;
     flex-direction: column;
     padding: 2rem;
-    overflow: hidden;
+    position: relative;
+    min-width: 0;
+    /* CRITICAL: Prevents flex item from expanding beyond parent */
+    width: 100%;
+    /* Ensure it takes full width of available space */
+}
+
+.page-header {
+    padding: 1.5rem 0 2rem 0;
+    /* Remove horizontal padding as container has it */
+    margin-bottom: 0;
+    /* Removed background/backdrop-filter to fix 'fundo azulado' complaint */
+    z-index: 10;
 }
 
 .page-header {
@@ -135,12 +155,28 @@
         margin-top: 12px;
     }
 
-    .header-actions button {
+    .agenda-scroll-container {
+        display: block;
+        width: 100%;
+        /* Ensure it doesn't overflow the viewport width incorrectly */
+        max-width: 100%;
+        overflow-x: auto;
+        /* Scrollbar appears here */
+        overflow-y: visible;
+        padding-bottom: 1.5rem;
+        padding-right: 1px;
+        /* Avoid rounding errors clipping right border */
+        /* Space for scrollbar */
+        /* Ensure nice spacing */
+    }
+
+    /* Ensure calendar takes available height but can scroll if needed */
+    .agenda-calendar {
         flex: 1;
-        white-space: nowrap;
-        justify-content: center;
-        padding: 12px;
-        font-size: 0.9rem;
+        min-height: 600px;
+        /* Min height to force scroll on small screens */
+        display: flex;
+        flex-direction: column;
     }
 
     /* Filters for Mobile - Restore Sidebar elements as horizontal scroll or similar if we modify HTML. 

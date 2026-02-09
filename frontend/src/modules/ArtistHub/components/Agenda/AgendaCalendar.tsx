@@ -30,15 +30,34 @@ export const AgendaCalendar: React.FC<AgendaCalendarProps> = ({ currentDate, eve
 
         // Days of current month
         for (let day = 1; day <= daysInMonth; day++) {
-            const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toISOString().split('T')[0];
-            const dayEvents = events.filter(e => e.start_time.startsWith(dateStr));
+            // Create date object for the specific day in local time
+            const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+
+            // Format check string manually to avoid UTC conversion issues (YYYY-MM-DD)
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dayStr = String(dateObj.getDate()).padStart(2, '0');
+            const dateCheck = `${year}-${month}-${dayStr}`;
+
+            const dayEvents = events.filter(e => {
+                // Convert event start time to local YYYY-MM-DD for accurate comparison
+                const eventDate = new Date(e.start_time);
+                const eventYear = eventDate.getFullYear();
+                const eventMonth = String(eventDate.getMonth() + 1).padStart(2, '0');
+                const eventDay = String(eventDate.getDate()).padStart(2, '0');
+                const eventDateStr = `${eventYear}-${eventMonth}-${eventDay}`;
+
+                return eventDateStr === dateCheck;
+            });
 
             // Sort events by time
             dayEvents.sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
 
+            const isToday = new Date().toDateString() === dateObj.toDateString();
+
             days.push(
                 <div key={day} className="calendar-day">
-                    <span className={`day-number ${new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString() ? 'today' : ''}`}>
+                    <span className={`day-number ${isToday ? 'today' : ''}`}>
                         {day}
                     </span>
                     <div className="day-events">

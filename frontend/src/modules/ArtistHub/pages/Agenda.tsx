@@ -4,6 +4,7 @@ import { Button } from '@components/common/Button';
 import { EventModal } from '../components/Agenda/EventModal';
 import { AgendaCalendar } from '../components/Agenda/AgendaCalendar';
 import { AgendaSidebar } from '../components/Agenda/AgendaSidebar';
+import { UpcomingEventsPanel } from '../components/Agenda/UpcomingEventsPanel';
 import './agenda-view.css'; // Renamed to force git update
 
 interface Event {
@@ -25,6 +26,7 @@ export const Agenda: React.FC = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<Event | undefined>(undefined);
+    const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
 
     const [filters, setFilters] = useState({
         types: ['release', 'show', 'recording', 'content', 'meeting', 'deadline', 'other'],
@@ -47,6 +49,24 @@ export const Agenda: React.FC = () => {
 
             const data = await artistHubService.getEvents(start, end);
             setEvents(data);
+
+            // Fetch upcoming events (next 15 days from now, regardless of current view)
+            // Just filtered from current request if applicable, or separately if needed.
+            // Ideally we should have a separate endpoint or param, but for now let's filter from what we have 
+            // OR fetch a slightly larger range if needed. 
+            // Better: Let's fetch specifically for dashboard to ensure we have data even if viewing past months
+            const now = new Date();
+            const futureEnd = new Date();
+            futureEnd.setDate(now.getDate() + 30);
+
+            const upcomingData = await artistHubService.getEvents(now.toISOString(), futureEnd.toISOString());
+            // Filter strictly future events and sort
+            const sortedUpcoming = upcomingData
+                .filter((e: Event) => new Date(e.start_time) >= now)
+                .sort((a: Event, b: Event) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+                .slice(0, 5); // Take top 5
+
+            setUpcomingEvents(sortedUpcoming);
         } catch (error) {
             console.error('Error loading events:', error);
         } finally {
@@ -95,7 +115,7 @@ export const Agenda: React.FC = () => {
                             <h1 style={{ color: 'white' }}>Agenda</h1>
                             <div className="date-controls">
                                 <button onClick={prevMonth}>&lt;</button>
-                                <span>{currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</span>
+                                <span className="capitalize">{currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</span>
                                 <button onClick={nextMonth}>&gt;</button>
                             </div>
                         </div>
@@ -108,7 +128,24 @@ export const Agenda: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Mobile Filters Drawer Style */}
+                    <UpcomingEventsPanel
+                        events={upcomingEvents}
+                        onEventClick={(e: any) => handleEventClick(e)}
+                    />
+
+                    <div className="agenda-scroll-container">
+                        {loading ? (
+                            <div className="loading-state">Carregando agenda...</div>
+                        ) : (
+                            <AgendaCalendar
+                                currentDate={currentDate}
+                                events={filteredEvents}
+                                onEventClick={handleEventClick}
+                            />
+                        )}
+                    </div>
+
+                    {/* Mobile Filters CSS */}
                     <style>{`
                         @media (max-width: 768px) {
                             .agenda-sidebar.show-mobile {
@@ -121,7 +158,6 @@ export const Agenda: React.FC = () => {
                                 padding: 20px;
                                 box-shadow: 10px 0 30px rgba(0,0,0,0.5);
                             }
-                            /* Overlay when menu is open */
                             .agenda-sidebar.show-mobile::before {
                                 content: '';
                                 position: fixed;
@@ -131,16 +167,6 @@ export const Agenda: React.FC = () => {
                             }
                         }
                     `}</style>
-
-                    {loading ? (
-                        <div className="loading-state">Carregando agenda...</div>
-                    ) : (
-                        <AgendaCalendar
-                            currentDate={currentDate}
-                            events={filteredEvents}
-                            onEventClick={handleEventClick}
-                        />
-                    )}
                 </div>
             </div>
 

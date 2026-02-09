@@ -1,0 +1,157 @@
+.upcoming-panel {
+    /* Removed gradient background */
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 2rem;
+    /* Add gap to calendar */
+}
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-header h3::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    background-color: #f97316;
+    /* Orange accent */
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+}
+
+.cards-container {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    /* Space for scrollbar if needed */
+}
+
+/* Scrollbar styling for horizontal scroll */
+.cards-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+.cards-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.upcoming-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 12px;
+    min-width: 200px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.upcoming-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.card-indicator {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+    background-color: #94a3b8;
+    /* Default */
+}
+
+/* Type Colors */
+.upcoming-card.type-release .card-indicator {
+    background-color: #ec4899;
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.4);
+}
+
+.upcoming-card.type-show .card-indicator {
+    background-color: #eab308;
+    box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);
+}
+
+.upcoming-card.type-recording .card-indicator {
+    background-color: #ef4444;
+}
+
+.upcoming-card.type-content .card-indicator {
+    background-color: #a855f7;
+}
+
+.upcoming-card.type-meeting .card-indicator {
+    background-color: #3b82f6;
+}
+
+.upcoming-card.type-deadline .card-indicator {
+    background-color: #f97316;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.card-date {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-type-label {
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .upcoming-panel {
+        padding: 12px 16px;
+    }
+
+    .cards-container {
+        gap: 12px;
+    }
+
+    .upcoming-card {
+        min-width: 180px;
+        padding: 10px;
+    }
+}

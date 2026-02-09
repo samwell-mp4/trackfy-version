@@ -10,6 +10,13 @@ interface EventModalProps {
     event?: any; // If provided, we are in edit mode
 }
 
+// Helper to get local ISO string for datetime-local input
+const toLocalISOString = (date: Date) => {
+    const tzOffset = date.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(date.getTime() - tzOffset)).toISOString().slice(0, 16);
+    return localISOTime;
+};
+
 export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSuccess, event }) => {
     const [title, setTitle] = useState('');
     const [type, setType] = useState('other');
@@ -23,18 +30,26 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSucce
     // Dynamic Metadata Fields
     const [metadata, setMetadata] = useState<any>({});
     const [tracks, setTracks] = useState<any[]>([]);
+    const [artists, setArtists] = useState<any[]>([]);
     const [selectedTrackId, setSelectedTrackId] = useState<string>('');
+    const [selectedArtistId, setSelectedArtistId] = useState<string>('');
+    const [attachments, setAttachments] = useState<any[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
-        loadTracks();
+        loadData();
     }, []);
 
-    const loadTracks = async () => {
+    const loadData = async () => {
         try {
-            const data = await artistHubService.getTracks();
-            setTracks(data);
+            const [tracksData, artistsData] = await Promise.all([
+                artistHubService.getTracks(),
+                artistHubService.getArtists()
+            ]);
+            setTracks(tracksData);
+            setArtists(artistsData);
         } catch (error) {
-            console.error('Error loading tracks:', error);
+            console.error('Error loading data:', error);
         }
     };
 
@@ -45,23 +60,24 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSucce
         if (event) {
             setTitle(event.title);
             setType(event.type);
-            setStartTime(new Date(event.start_time).toISOString().slice(0, 16));
-            setEndTime(new Date(event.end_time).toISOString().slice(0, 16));
+            setStartTime(toLocalISOString(new Date(event.start_time)));
+            setEndTime(toLocalISOString(new Date(event.end_time)));
             setStatus(event.status || 'planned');
             setPriority(event.priority || 'medium');
             setDescription(event.description || '');
             setLocation(event.location || '');
             setMetadata(event.metadata || {});
+            setAttachments(event.metadata?.attachments || []);
             setSelectedTrackId(event.track_id || '');
+            setSelectedArtistId(event.metadata?.artistId || '');
         } else {
             // Reset for new event
             setTitle('');
             setType('other');
             const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            setStartTime(now.toISOString().slice(0, 16));
+            setStartTime(toLocalISOString(now));
             const end = new Date(now.getTime() + 60 * 60 * 1000); // +1 hour
-            setEndTime(end.toISOString().slice(0, 16));
+            setEndTime(toLocalISOString(end));
             setStatus('planned');
             setPriority('medium');
             setDescription('');
@@ -89,7 +105,11 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSucce
                 priority,
                 description,
                 location,
-                metadata,
+                metadata: {
+                    ...metadata,
+                    attachments,
+                    artistId: selectedArtistId
+                },
                 track_id: selectedTrackId || null
             };
 
@@ -107,6 +127,109 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSucce
         }
     };
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setIsUploading(true);
+            try {
+                const file = e.target.files[0];
+                // Simulating upload since we might not have a real backend endpoint ready or configured perfectly
+                // In a real scenario, we would use: const response = await artistHubService.uploadFile(file);
+                // For now, we'll confirm if we can use the service normally
+                const response: any = await artistHubService.uploadFile(file);
+
+                // If the response is the structure from the mock service (data.file, data.filename)
+                // or a real URL. Let's assume it returns { url: '...', filename: '...' } or similar.
+                // Based on the code read previously, it returns data.file as base64.
+
+                const newAttachment = {
+                    name: response.filename || file.name,
+                    url: response.url || response.file, // base64 or url
+                    type: file.type
+                };
+                setAttachments([...attachments, newAttachment]);
+            } catch (err) {
+                console.error('Upload error', err);
+                setError('Erro ao fazer upload do arquivo.');
+            } finally {
+                setIsUploading(false);
+            }
+        }
+    };
+
+    const removeAttachment = (index: number) => {
+        const newAttachments = [...attachments];
+        newAttachments.splice(index, 1);
+        setAttachments(newAttachments);
+    };
+
+    const renderCommonFields = () => (
+        <div className="metadata-section">
+            <h4>Vínculos e Anexos</h4>
+            <div className="form-group">
+                <label>Artista Principal</label>
+                <select
+                    value={selectedArtistId}
+                    onChange={(e) => setSelectedArtistId(e.target.value)}
+                >
+                    <option value="">Selecione um artista...</option>
+                    {artists.map(artist => (
+                        <option key={artist.id} value={artist.id}>
+                            {artist.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="form-group">
+                <label>Música Relacionada</label>
+                <select
+                    value={selectedTrackId}
+                    onChange={(e) => {
+                        setSelectedTrackId(e.target.value);
+                        if (!title && e.target.value) {
+                            const track = tracks.find(t => t.id === e.target.value);
+                            if (track) setTitle(`${type === 'release' ? 'Lançamento: ' : ''}${track.title}`);
+                        }
+                    }}
+                >
+                    <option value="">Nenhuma música selecionada...</option>
+                    {tracks.map(track => (
+                        <option key={track.id} value={track.id}>
+                            {track.title} {track.version ? `(${track.version})` : ''}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="form-group">
+                <label>Anexos</label>
+                <div className="file-upload-container">
+                    <input
+                        type="file"
+                        id="file-upload"
+                        onChange={handleFileUpload}
+                        disabled={isUploading}
+                        style={{ display: 'none' }}
+                    />
+                    <label htmlFor="file-upload" className="upload-btn">
+                        {isUploading ? 'Enviando...' : '📎 Adicionar Arquivo'}
+                    </label>
+                </div>
+
+                {attachments.length > 0 && (
+                    <div className="attachments-list">
+                        {attachments.map((file, index) => (
+                            <div key={index} className="attachment-item">
+                                <span className="file-name">{file.name}</span>
+                                <button type="button" onClick={() => removeAttachment(index)} className="remove-file">×</button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+
     const renderMetadataFields = () => {
         switch (type) {
             case 'release':
@@ -114,25 +237,7 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSucce
                     <div className="metadata-section">
                         <h4>Detalhes do Lançamento</h4>
                         <div className="form-group">
-                            <label>Música Relacionada</label>
-                            <select
-                                value={selectedTrackId}
-                                onChange={(e) => {
-                                    setSelectedTrackId(e.target.value);
-                                    // Auto-fill title if empty
-                                    if (!title && e.target.value) {
-                                        const track = tracks.find(t => t.id === e.target.value);
-                                        if (track) setTitle(`Lançamento: ${track.title}`);
-                                    }
-                                }}
-                            >
-                                <option value="">Selecione uma música...</option>
-                                {tracks.map(track => (
-                                    <option key={track.id} value={track.id}>
-                                        {track.title} {track.version ? `(${track.version})` : ''}
-                                    </option>
-                                ))}
-                            </select>
+                            {/* Track Selection moved to Common Fields */}
                         </div>
                         <div className="form-group">
                             <label>Tipo de Lançamento</label>
@@ -312,6 +417,7 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, onSucce
                             />
                         </div>
 
+                        {renderCommonFields()}
                         {renderMetadataFields()}
                     </form>
                 </div>
